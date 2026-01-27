@@ -34,7 +34,7 @@ body {
 h1 {
   color: white;
   text-align: center;
-  font-size: 1.3rem;
+  font-size: 1.25rem;
   margin: 10px 0;
 }
 
@@ -114,6 +114,7 @@ const info = document.getElementById("info");
 let level = 1;
 let noBtn;
 
+/* UTILIDADES */
 function clearGame() {
   [...game.children].forEach(e => {
     if (e.id !== "yes") e.remove();
@@ -132,11 +133,11 @@ function nextLevel() {
   startLevel();
 }
 
-/* -------- CONFETI -------- */
+/* CONFETI */
 function party() {
   clearGame();
   info.textContent = "🎉 OBVIAMENTE DIJISTE QUE SÍ 🎉";
-  for (let i = 0; i < 80; i++) {
+  for (let i = 0; i < 90; i++) {
     const c = document.createElement("div");
     c.className = "confetti";
     c.style.left = Math.random() * 100 + "%";
@@ -146,7 +147,7 @@ function party() {
   }
 }
 
-/* -------- NIVELES -------- */
+/* NIVELES */
 
 function level1() {
   clearGame();
@@ -202,46 +203,39 @@ function level4() {
   noBtn.onclick = nextLevel;
   game.appendChild(noBtn);
 
-  setInterval(() => {
-    if (noBtn) place(noBtn);
-  }, 800);
+  setInterval(() => place(noBtn), 800);
 }
 
 function level5() {
   clearGame();
-  info.textContent = "Nivel 5 – Toca rápido 😈";
+  info.textContent = "Nivel 5 – Paciencia ⏳";
 
   let active = true;
 
-  function spawnNo() {
+  function spawn() {
     if (!active) return;
 
     noBtn = document.createElement("button");
     noBtn.className = "no";
     noBtn.textContent = "No 🙃";
     place(noBtn);
-
     noBtn.onclick = () => {
       active = false;
       nextLevel();
     };
-
     game.appendChild(noBtn);
 
     setTimeout(() => {
       if (noBtn && active) {
         noBtn.remove();
-        setTimeout(spawnNo, 500); // reaparece
+        setTimeout(spawn, 600);
       }
     }, 900);
   }
-
-  spawnNo();
+  spawn();
 }
 
-
-
-/* -------- NIVEL FINAL: LABERINTO -------- */
+/* NIVEL 6 – EL QUE NO SE MUEVE */
 function level6() {
   clearGame();
   info.textContent = "Nivel 6 – El que NO se mueve 🧠";
@@ -250,7 +244,6 @@ function level6() {
   const buttons = [];
   const staticIndex = Math.floor(Math.random() * total);
 
-  // CREAR BOTONES
   for (let i = 0; i < total; i++) {
     const b = document.createElement("button");
     b.className = "fake";
@@ -265,26 +258,130 @@ function level6() {
         b.textContent = "No 🙃";
         b.onclick = nextLevel;
       } else {
-        info.textContent = "❌ Ese sí se movió… mira mejor";
         level6();
       }
     };
   }
 
-  // MOVER TODOS MENOS UNO
   let moves = 0;
   const interval = setInterval(() => {
     buttons.forEach((btn, idx) => {
       if (idx !== staticIndex) place(btn);
     });
     moves++;
-
     if (moves >= 4) clearInterval(interval);
   }, 900);
 }
 
+/* NIVEL 7 */
+function level7() {
+  clearGame();
+  info.textContent = "Nivel 7 – Uno es diferente";
 
+  const total = 9;
+  const correct = Math.floor(Math.random() * total);
 
+  for (let i = 0; i < total; i++) {
+    const b = document.createElement("button");
+    b.className = "fake";
+    b.textContent = i === correct ? "No " : "No";
+    place(b);
+    game.appendChild(b);
+
+    b.onclick = () => {
+      if (i === correct) {
+        b.className = "no";
+        b.textContent = "No 🙃";
+        b.onclick = nextLevel;
+      } else level7();
+    };
+  }
+}
+
+/* NIVEL 8 */
+function level8() {
+  clearGame();
+  info.textContent = "Nivel 8 – Espera…";
+
+  const total = 7;
+  const delayed = Math.floor(Math.random() * total);
+
+  for (let i = 0; i < total; i++) {
+    const b = document.createElement("button");
+    b.className = "fake";
+    b.textContent = "No";
+    place(b);
+    game.appendChild(b);
+
+    b.onclick = () => {
+      if (i === delayed) {
+        b.className = "no";
+        b.textContent = "No 🙃";
+        b.onclick = nextLevel;
+      } else level8();
+    };
+
+    setTimeout(() => {
+      setInterval(() => place(b), 1200);
+    }, i === delayed ? 2000 : 0);
+  }
+}
+
+/* NIVEL 9 */
+function level9() {
+  clearGame();
+  info.textContent = "Nivel 9 – Prueba";
+
+  const total = 8;
+  const correct = Math.floor(Math.random() * total);
+
+  for (let i = 0; i < total; i++) {
+    const b = document.createElement("button");
+    b.className = "fake";
+    b.textContent = "No";
+    place(b);
+    game.appendChild(b);
+
+    if (i !== correct) b.onpointerenter = () => place(b);
+
+    b.onclick = () => {
+      if (i === correct) {
+        b.className = "no";
+        b.textContent = "No 🙃";
+        b.onclick = nextLevel;
+      } else level9();
+    };
+  }
+}
+
+/* NIVEL 10 – FINAL */
+function level10() {
+  clearGame();
+  info.textContent = "Nivel 10 – Solo uno dice la verdad";
+
+  const texts = [
+    "El NO está aquí",
+    "El NO no está aquí",
+    "El botón de la izquierda miente"
+  ];
+  const correct = 1;
+
+  texts.forEach((t, i) => {
+    const b = document.createElement("button");
+    b.className = "fake";
+    b.textContent = t;
+    place(b);
+    game.appendChild(b);
+
+    b.onclick = () => {
+      if (i === correct) {
+        b.className = "no";
+        b.textContent = "NO 🙃";
+        b.onclick = () => alert("🏆 Llegaste al final… respeto total");
+      } else level10();
+    };
+  });
+}
 
 function startLevel() {
   if (level === 1) level1();
@@ -292,11 +389,14 @@ function startLevel() {
   else if (level === 3) level3();
   else if (level === 4) level4();
   else if (level === 5) level5();
-  else level6();
+  else if (level === 6) level6();
+  else if (level === 7) level7();
+  else if (level === 8) level8();
+  else if (level === 9) level9();
+  else level10();
 }
 
 yesBtn.onclick = party;
-
 startLevel();
 </script>
 </body>
