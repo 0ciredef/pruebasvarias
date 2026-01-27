@@ -244,14 +244,14 @@ function level5() {
 /* -------- NIVEL FINAL: LABERINTO -------- */
 function level6() {
   clearGame();
-  info.textContent = "Nivel 6 – Piensa bien 🧠";
+  info.textContent = "Nivel 6 – El que NO se mueve 🧠";
 
-  let correctIndex = Math.floor(Math.random() * 9);
-  let moves = Array(9).fill(0);
+  const total = 8;
   const buttons = [];
+  const staticIndex = Math.floor(Math.random() * total);
 
-  // CREA BOTONES
-  for (let i = 0; i < 9; i++) {
+  // CREAR BOTONES
+  for (let i = 0; i < total; i++) {
     const b = document.createElement("button");
     b.className = "fake";
     b.textContent = "No";
@@ -260,34 +260,29 @@ function level6() {
     game.appendChild(b);
 
     b.onclick = () => {
-      if (i === correctIndex && moves[i] >= 2) {
+      if (i === staticIndex) {
         b.className = "no";
         b.textContent = "No 🙃";
         b.onclick = nextLevel;
       } else {
-        info.textContent = "❌ Ese no… observa mejor";
+        info.textContent = "❌ Ese sí se movió… mira mejor";
         level6();
       }
     };
   }
 
-  // MOVIMIENTOS CONTROLADOS
-  let rounds = 0;
+  // MOVER TODOS MENOS UNO
+  let moves = 0;
   const interval = setInterval(() => {
-    rounds++;
-    const idx = Math.floor(Math.random() * 9);
-    place(buttons[idx]);
-    moves[idx]++;
+    buttons.forEach((btn, idx) => {
+      if (idx !== staticIndex) place(btn);
+    });
+    moves++;
 
-    // SOLO EL CORRECTO SE MUEVE DOS VECES
-    if (rounds === 2) {
-      place(buttons[correctIndex]);
-      moves[correctIndex]++;
-    }
-
-    if (rounds >= 3) clearInterval(interval);
-  }, 800);
+    if (moves >= 4) clearInterval(interval);
+  }, 900);
 }
+
 
 
 
