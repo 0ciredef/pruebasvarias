@@ -410,21 +410,29 @@ function level10() {
     clearGame();
     info.textContent = `Nivel 10 – Pregunta ${current + 1} de 5`;
 
-    // Texto de la pregunta
-    const questionBtn = document.createElement("button");
-    questionBtn.className = "fake";
-    questionBtn.textContent = questions[current].q;
-    questionBtn.style.pointerEvents = "none";
-    place(questionBtn);
-    game.appendChild(questionBtn);
+    const wrapper = document.createElement("div");
+    wrapper.style.position = "absolute";
+    wrapper.style.top = "50%";
+    wrapper.style.left = "50%";
+    wrapper.style.transform = "translate(-50%, -50%)";
+    wrapper.style.width = "90%";
+    wrapper.style.display = "flex";
+    wrapper.style.flexDirection = "column";
+    wrapper.style.gap = "10px";
+    wrapper.style.alignItems = "stretch";
+
+    // Pregunta
+    const qBtn = document.createElement("button");
+    qBtn.className = "fake";
+    qBtn.textContent = questions[current].q;
+    qBtn.style.pointerEvents = "none";
+    wrapper.appendChild(qBtn);
 
     // Opciones
     questions[current].options.forEach((opt, i) => {
       const b = document.createElement("button");
       b.className = "fake";
       b.textContent = opt;
-      place(b);
-      game.appendChild(b);
 
       b.onclick = () => {
         if (i === questions[current].correct) {
@@ -439,7 +447,11 @@ function level10() {
           renderQuestion();
         }
       };
+
+      wrapper.appendChild(b);
     });
+
+    game.appendChild(wrapper);
   }
 
   function unlockNo() {
@@ -449,8 +461,11 @@ function level10() {
     noBtn = document.createElement("button");
     noBtn.className = "no";
     noBtn.textContent = "No 🙃";
-    place(noBtn);
+    noBtn.style.left = "50%";
+    noBtn.style.top = "50%";
+    noBtn.style.transform = "translate(-50%, -50%)";
     noBtn.onclick = party;
+
     game.appendChild(noBtn);
   }
 
