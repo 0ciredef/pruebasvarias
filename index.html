@@ -209,18 +209,37 @@ function level4() {
 
 function level5() {
   clearGame();
-  info.textContent = "Nivel 5 – Tiempo";
-  setTimeout(() => {
+  info.textContent = "Nivel 5 – Toca rápido 😈";
+
+  let active = true;
+
+  function spawnNo() {
+    if (!active) return;
+
     noBtn = document.createElement("button");
     noBtn.className = "no";
     noBtn.textContent = "No 🙃";
     place(noBtn);
-    noBtn.onclick = nextLevel;
+
+    noBtn.onclick = () => {
+      active = false;
+      nextLevel();
+    };
+
     game.appendChild(noBtn);
 
-    setTimeout(() => noBtn?.remove(), 1000);
-  }, 500);
+    setTimeout(() => {
+      if (noBtn && active) {
+        noBtn.remove();
+        setTimeout(spawnNo, 500); // reaparece
+      }
+    }, 900);
+  }
+
+  spawnNo();
 }
+
+
 
 /* -------- NIVEL FINAL: LABERINTO -------- */
 function level6() {
