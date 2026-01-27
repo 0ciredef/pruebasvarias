@@ -9,37 +9,38 @@
 * {
   box-sizing: border-box;
   font-family: system-ui, sans-serif;
-  touch-action: manipulation;
+  touch-action: none;
 }
 
 body {
   margin: 0;
   height: 100dvh;
-  background: #111;
+  background: #0f0f0f;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   overflow: hidden;
 }
 
-.screen {
+.container {
   width: 100%;
+  max-width: 390px;
   height: 100%;
+  padding: 12px;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
 }
 
 h1 {
   color: white;
-  text-align: center;
-  padding: 10px;
   font-size: 1.4rem;
+  text-align: center;
+  margin: 10px 0;
 }
 
 #game {
-  width: 92%;
-  max-width: 400px;
-  height: 60dvh;
-  background: #222;
+  flex: 1;
+  background: #1c1c1c;
   border-radius: 16px;
   position: relative;
   overflow: hidden;
@@ -47,20 +48,19 @@ h1 {
 
 button {
   border: none;
-  border-radius: 12px;
+  border-radius: 14px;
   padding: 14px 18px;
   font-size: 1rem;
-  user-select: none;
   position: absolute;
 }
 
 #yes {
   background: #4caf50;
   color: white;
-  bottom: 10px;
   left: 50%;
+  bottom: 14px;
   transform: translateX(-50%);
-  z-index: 10;
+  z-index: 20;
 }
 
 .no {
@@ -70,238 +70,243 @@ button {
 
 .fake {
   background: #555;
-  color: #aaa;
+  color: #bbb;
 }
 
 #info {
   color: #aaa;
+  text-align: center;
   font-size: 0.85rem;
   margin-top: 6px;
 }
 
-/* Fiesta */
-.party {
-  background: linear-gradient(135deg, #ff0080, #00c3ff);
-  animation: partyBg 1s infinite alternate;
-}
-
-@keyframes partyBg {
-  from { filter: hue-rotate(0deg); }
-  to { filter: hue-rotate(360deg); }
-}
-
+/* CONFETI */
 .confetti {
   position: absolute;
   width: 8px;
   height: 8px;
-  background: red;
-  animation: fall 3s linear infinite;
+  background: hsl(var(--h), 90%, 60%);
+  animation: fall 2s linear infinite;
 }
 
 @keyframes fall {
-  from { transform: translateY(-10vh) rotate(0deg); }
-  to { transform: translateY(110vh) rotate(720deg); }
+  from { transform: translateY(-10px) rotate(0); }
+  to { transform: translateY(110vh) rotate(360deg); }
+}
+
+/* LABERINTO */
+#player {
+  width: 20px;
+  height: 20px;
+  background: white;
+  border-radius: 50%;
+  position: absolute;
+  z-index: 5;
+}
+.wall {
+  position: absolute;
+  background: #333;
+}
+.trap {
+  position: absolute;
+  background: #4caf50;
+  opacity: 0.8;
 }
 </style>
 </head>
 
 <body>
-
-<div id="main" class="screen">
+<div class="container">
   <h1>¿Quieres ver a Fede el 7 de febrero?</h1>
-
-  <div id="game">
-    <button id="yes">Sí 💖</button>
-    <button id="no" class="no">No 🙃</button>
-  </div>
-
-  <div id="info">Nivel 1</div>
+  <div id="game"></div>
+  <div id="info"></div>
 </div>
 
 <script>
 const game = document.getElementById("game");
-const yesBtn = document.getElementById("yes");
-const noBtn = document.getElementById("no");
 const info = document.getElementById("info");
-const main = document.getElementById("main");
 
 let level = 1;
+let noBtn;
 
-/* UTILIDADES */
-function bounds(el) {
+function clearGame() {
+  game.innerHTML = "";
+}
+
+function vibrar() {
+  navigator.vibrate?.(40);
+}
+
+function limits(el) {
   return {
-    maxX: game.clientWidth - el.offsetWidth,
-    maxY: game.clientHeight - el.offsetHeight - 60
+    x: game.clientWidth - el.offsetWidth,
+    y: game.clientHeight - el.offsetHeight - 70
   };
 }
 
-function randomPos(el) {
-  const { maxX, maxY } = bounds(el);
-  el.style.left = Math.random() * maxX + "px";
-  el.style.top = Math.random() * maxY + "px";
+function place(el) {
+  const l = limits(el);
+  el.style.left = Math.random() * l.x + "px";
+  el.style.top = Math.random() * l.y + "px";
 }
 
-function vibrate() {
-  navigator.vibrate && navigator.vibrate(40);
-}
-
-function clearExtras() {
-  [...game.querySelectorAll(".fake,.player,.goal")].forEach(e => e.remove());
-}
-
-/* NIVELES */
-noBtn.addEventListener("pointerdown", () => {
-  vibrate();
-  level++;
-  info.textContent = "Nivel " + level;
-  clearExtras();
-
-  if (level === 2) {
-    noBtn.textContent = "¿Seguro?";
-  }
-
-  if (level === 3) {
-    noBtn.addEventListener("pointerenter", () => randomPos(noBtn));
-  }
-
-  if (level === 4) {
-    setInterval(() => randomPos(noBtn), 900);
-  }
-
-  if (level === 5) {
-    noBtn.style.fontSize = "0.7rem";
-  }
-
-  if (level === 6) puertas();
-  if (level === 7) secuencia();
-  if (level === 8) tiempo();
-  if (level >= 9) laberinto();
-});
-
-/* NIVEL 6 */
-function puertas() {
-  noBtn.style.display = "none";
-  info.textContent = "Nivel 6 – Encuentra el verdadero";
-
-  let count = 0;
-  for (let i = 0; i < 4; i++) {
-    const b = document.createElement("button");
-    b.className = "fake";
-    b.textContent = "¿NO?";
-    randomPos(b);
-    b.addEventListener("pointerdown", () => {
-      vibrate();
-      b.remove();
-      count++;
-      if (count === 3) {
-        noBtn.style.display = "block";
-        randomPos(noBtn);
-      }
-    });
-    game.appendChild(b);
-  }
-}
-
-/* NIVEL 7 */
-function secuencia() {
-  noBtn.style.display = "none";
-  info.textContent = "Nivel 7 – En orden";
-  let step = 1;
-
-  for (let i = 1; i <= 3; i++) {
-    const b = document.createElement("button");
-    b.className = "fake";
-    b.textContent = i;
-    randomPos(b);
-    b.addEventListener("pointerdown", () => {
-      if (i === step) {
-        b.remove();
-        step++;
-        vibrate();
-        if (step === 4) {
-          noBtn.style.display = "block";
-          randomPos(noBtn);
-        }
-      } else {
-        secuencia();
-      }
-    });
-    game.appendChild(b);
-  }
-}
-
-/* NIVEL 8 */
-function tiempo() {
-  noBtn.style.display = "none";
-  info.textContent = "Nivel 8 – Rápido";
-
-  setTimeout(() => {
-    noBtn.style.display = "block";
-    randomPos(noBtn);
-    setTimeout(() => {
-      if (level === 8) tiempo();
-    }, 900);
-  }, 600);
-}
-
-/* NIVEL FINAL – LABERINTO */
-function laberinto() {
-  clearExtras();
-  noBtn.style.display = "none";
-  info.textContent = "Nivel ∞ – Llega al NO";
-
-  const player = document.createElement("div");
-  player.className = "player";
-  player.style.width = "20px";
-  player.style.height = "20px";
-  player.style.background = "#4caf50";
-  player.style.borderRadius = "50%";
-  player.style.position = "absolute";
-  player.style.left = "10px";
-  player.style.top = "10px";
-
-  const goal = document.createElement("button");
-  goal.className = "goal no";
-  goal.textContent = "NO";
-  goal.style.right = "10px";
-  goal.style.bottom = "70px";
-
-  game.appendChild(player);
-  game.appendChild(goal);
-
-  game.addEventListener("pointermove", e => {
-    const rect = game.getBoundingClientRect();
-    player.style.left = e.clientX - rect.left + "px";
-    player.style.top = e.clientY - rect.top + "px";
-  });
-
-  goal.addEventListener("pointerdown", () => {
-    level++;
-    laberinto();
-  });
-}
-
-/* SÍ → FIESTA */
-yesBtn.addEventListener("pointerdown", () => {
-  main.classList.add("party");
-  for (let i = 0; i < 80; i++) {
+/* -------- CONFETI -------- */
+function fiesta() {
+  clearGame();
+  info.textContent = "🎉 SABÍA QUE DIRÍAS QUE SÍ 🎉";
+  for (let i = 0; i < 120; i++) {
     const c = document.createElement("div");
     c.className = "confetti";
-    c.style.left = Math.random() * 100 + "vw";
-    c.style.background = `hsl(${Math.random()*360},100%,50%)`;
-    c.style.animationDuration = 2 + Math.random() * 3 + "s";
-    document.body.appendChild(c);
+    c.style.left = Math.random() * 100 + "%";
+    c.style.animationDelay = Math.random() * 2 + "s";
+    c.style.setProperty("--h", Math.random() * 360);
+    game.appendChild(c);
   }
+}
+
+/* -------- NO BÁSICO -------- */
+function spawnNo(clickable = true) {
+  noBtn = document.createElement("button");
+  noBtn.className = "no";
+  noBtn.textContent = "No 🙃";
+  place(noBtn);
+  if (clickable) noBtn.onclick = nextLevel;
+  game.appendChild(noBtn);
+}
+
+/* -------- NIVELES -------- */
+function level1() {
+  info.textContent = "Nivel 1";
+  const yes = document.createElement("button");
+  yes.id = "yes";
+  yes.textContent = "Sí 💖";
+  yes.onclick = fiesta;
+  game.appendChild(yes);
+
+  noBtn = document.createElement("button");
+  noBtn.className = "no";
+  noBtn.textContent = "No";
+  noBtn.style.left = "50%";
+  noBtn.style.bottom = "70px";
+  noBtn.style.transform = "translateX(-50%)";
+  noBtn.onclick = nextLevel;
+  game.appendChild(noBtn);
+}
+
+function level2() {
+  info.textContent = "Nivel 2 – Se mueve";
+  spawnNo();
+  noBtn.onpointerdown = () => {
+    vibrar();
+    place(noBtn);
+  };
+}
+
+function level3() {
+  info.textContent = "Nivel 3 – Duplicado";
+  for (let i = 0; i < 3; i++) {
+    const f = document.createElement("button");
+    f.className = "fake";
+    f.textContent = "No?";
+    place(f);
+    f.onclick = () => f.remove();
+    game.appendChild(f);
+  }
+  spawnNo();
+}
+
+function level4() {
+  info.textContent = "Nivel 4 – Desaparece";
+  setInterval(() => {
+    if (noBtn) noBtn.remove();
+    spawnNo();
+  }, 900);
+}
+
+function level5() {
+  info.textContent = "Nivel 5 – Puertas";
+  let count = 0;
+  for (let i = 0; i < 4; i++) {
+    const d = document.createElement("button");
+    d.className = "fake";
+    d.textContent = "¿No?";
+    place(d);
+    d.onclick = () => {
+      d.remove();
+      if (++count === 3) spawnNo();
+    };
+    game.appendChild(d);
+  }
+}
+
+function level6() {
+  info.textContent = "Nivel 6 – Tiempo";
   setTimeout(() => {
-    alert("Sabía que dirías que SÍ 💖🎉");
-  }, 800);
-});
+    spawnNo();
+    setTimeout(() => noBtn?.remove(), 1000);
+  }, 700);
+}
 
-/* INICIO */
-noBtn.style.top = "60%";
-noBtn.style.left = "50%";
-noBtn.style.transform = "translateX(-50%)";
+function level7() {
+  info.textContent = "Nivel 7 – Laberinto";
+  clearGame();
+
+  const player = document.createElement("div");
+  player.id = "player";
+  player.style.left = "10px";
+  player.style.top = "10px";
+  game.appendChild(player);
+
+  spawnNo(true);
+  noBtn.style.left = "320px";
+  noBtn.style.top = "520px";
+
+  const walls = [
+    [50,0,20,400],[100,200,250,20],[200,0,20,350]
+  ];
+
+  walls.forEach(w => {
+    const wall = document.createElement("div");
+    wall.className = "wall";
+    wall.style.left = w[0]+"px";
+    wall.style.top = w[1]+"px";
+    wall.style.width = w[2]+"px";
+    wall.style.height = w[3]+"px";
+    game.appendChild(wall);
+  });
+
+  game.onpointermove = e => {
+    player.style.left = e.offsetX + "px";
+    player.style.top = e.offsetY + "px";
+
+    const p = player.getBoundingClientRect();
+    const n = noBtn.getBoundingClientRect();
+    if (
+      p.left < n.right &&
+      p.right > n.left &&
+      p.top < n.bottom &&
+      p.bottom > n.top
+    ) {
+      nextLevel();
+    }
+  };
+}
+
+function nextLevel() {
+  vibrar();
+  clearGame();
+  level++;
+  if (level === 2) level2();
+  else if (level === 3) level3();
+  else if (level === 4) level4();
+  else if (level === 5) level5();
+  else if (level === 6) level6();
+  else if (level === 7) level7();
+  else alert("Ok ya… imposible decir que no 😂");
+}
+
+/* START */
+level1();
 </script>
-
 </body>
 </html>
