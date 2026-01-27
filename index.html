@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 <title>Pregunta importante</title>
 
 <style>
@@ -14,29 +14,31 @@
 
   body {
     margin: 0;
-    height: 100vh;
+    height: 100dvh;
     background: linear-gradient(135deg, #ffdde1, #ee9ca7);
-    overflow: hidden;
     display: flex;
     justify-content: center;
     align-items: center;
+    overflow: hidden;
   }
 
   .container {
-    text-align: center;
     width: 100%;
     max-width: 360px;
     padding: 20px;
+    text-align: center;
   }
 
   h1 {
-    font-size: 1.7rem;
-    margin-bottom: 25px;
+    font-size: 1.6rem;
+    margin-bottom: 20px;
   }
 
   .buttons {
     position: relative;
-    height: 260px;
+    height: 280px;
+    width: 100%;
+    overflow: hidden;
   }
 
   button {
@@ -46,7 +48,7 @@
     border-radius: 12px;
     border: none;
     cursor: pointer;
-    transition: transform 0.2s;
+    user-select: none;
   }
 
   #yes {
@@ -58,14 +60,16 @@
     z-index: 2;
   }
 
-  .no {
+  #no {
     background: #f44336;
     color: white;
+    left: 40px;
+    top: 180px;
   }
 
   #counter {
-    margin-top: 15px;
-    font-size: 0.95rem;
+    margin-top: 12px;
+    font-size: 0.9rem;
   }
 </style>
 </head>
@@ -74,43 +78,54 @@
 <div class="container">
   <h1>¿Quieres ver a Fede el 7 de febrero?</h1>
 
-  <div class="buttons" id="gameArea">
+  <div class="buttons" id="area">
     <button id="yes">Sí 💖</button>
-    <button class="no" id="no">No 🙃</button>
+    <button id="no">No 🙃</button>
   </div>
 
   <div id="counter">Nivel: 1</div>
 </div>
 
 <script>
-let level = 1;
-let attempts = 0;
-let vx = 2, vy = 2;
-let x = 80, y = 160;
-let bouncing = false;
-
 const noBtn = document.getElementById("no");
 const yesBtn = document.getElementById("yes");
 const counter = document.getElementById("counter");
-const area = document.getElementById("gameArea");
+const area = document.getElementById("area");
+
+let attempts = 0;
+let level = 1;
+let vx = 1.5;
+let vy = 1.5;
+let x = 40;
+let y = 180;
+let bouncing = false;
 
 const frases = [
   "¿Seguro? 😏",
-  "Como la basiquita de Raquel 😌",
+  "La basiquita de Raquel 😌",
   "Ni el Xbox por 1 peso 🎮",
   "Ping pong destrucción 🏓",
-  "Otra derrota 😎"
+  "Otra derrota 😎",
+  "Casi… 🙃"
 ];
 
 function vibrar() {
-  if (navigator.vibrate) navigator.vibrate(60);
+  if (navigator.vibrate) navigator.vibrate(50);
 }
 
-function randomPosition(btn) {
-  const maxX = window.innerWidth - btn.offsetWidth;
-  const maxY = window.innerHeight - btn.offsetHeight;
-  btn.style.left = Math.random() * maxX + "px";
-  btn.style.top = Math.random() * maxY + "px";
+function limites() {
+  return {
+    maxX: area.clientWidth - noBtn.offsetWidth,
+    maxY: area.clientHeight - noBtn.offsetHeight
+  };
+}
+
+function randomMove() {
+  const { maxX, maxY } = limites();
+  x = Math.random() * maxX;
+  y = Math.random() * maxY;
+  noBtn.style.left = x + "px";
+  noBtn.style.top = y + "px";
 }
 
 function dvdBounce() {
@@ -118,12 +133,13 @@ function dvdBounce() {
   bouncing = true;
 
   function move() {
-    const rect = noBtn.getBoundingClientRect();
+    const { maxX, maxY } = limites();
+
     x += vx;
     y += vy;
 
-    if (x <= 0 || x + rect.width >= window.innerWidth) vx *= -1;
-    if (y <= 0 || y + rect.height >= window.innerHeight) vy *= -1;
+    if (x <= 0 || x >= maxX) vx *= -1;
+    if (y <= 0 || y >= maxY) vy *= -1;
 
     noBtn.style.left = x + "px";
     noBtn.style.top = y + "px";
@@ -133,54 +149,41 @@ function dvdBounce() {
   move();
 }
 
-function spawnClone() {
-  const clone = noBtn.cloneNode(true);
-  clone.style.opacity = 0.6;
-  randomPosition(clone);
-  clone.onclick = () => clone.remove();
-  area.appendChild(clone);
-}
-
 function onNoPress() {
   attempts++;
   vibrar();
+
   noBtn.textContent = frases[Math.floor(Math.random() * frases.length)];
 
   if (attempts === 2) level = 2;
   if (attempts === 4) level = 3;
   if (attempts === 6) level = 4;
-  if (attempts === 8) level = 5;
 
   counter.textContent = `Nivel: ${level}`;
 
   yesBtn.style.transform =
     `translateX(-50%) scale(${1 + attempts * 0.07})`;
 
-  if (level === 2) {
-    randomPosition(noBtn);
-  }
+  if (level === 2) randomMove();
 
   if (level === 3) {
-    vx *= 1.2; vy *= 1.2;
+    vx *= 1.2;
+    vy *= 1.2;
     dvdBounce();
   }
 
   if (level === 4) {
     noBtn.style.transform = `scale(${0.9 - attempts * 0.03})`;
-    vx *= 1.3; vy *= 1.3;
-  }
-
-  if (level === 5) {
-    spawnClone();
+    vx *= 1.3;
+    vy *= 1.3;
   }
 }
 
-noBtn.addEventListener("click", onNoPress);
-noBtn.addEventListener("touchstart", onNoPress);
+noBtn.addEventListener("pointerdown", onNoPress);
 
-yesBtn.onclick = () => {
+yesBtn.addEventListener("pointerdown", () => {
   alert("Sabía que dirías que sí 💖😌");
-};
+});
 </script>
 </body>
 </html>
