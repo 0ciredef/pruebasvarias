@@ -463,27 +463,22 @@ function level10() {
   }
 
   function unlockNo() {
-  clearGame();
-  info.textContent = "Desbloqueaste el NO final 😈";
+    clearGame();
+    info.textContent = "Desbloqueaste el NO final 😈";
 
-  noBtn = document.createElement("button");
-  noBtn.className = "no";
-  noBtn.textContent = "No 🙃";
-  noBtn.style.left = "50%";
-  noBtn.style.top = "50%";
-  noBtn.style.transform = "translate(-50%, -50%)";
+    noBtn = document.createElement("button");
+    noBtn.className = "no";
+    noBtn.textContent = "No 🙃";
+    noBtn.style.left = "50%";
+    noBtn.style.top = "50%";
+    noBtn.style.transform = "translate(-50%, -50%)";
+    noBtn.onclick = party;
 
-  // Al tocarlo, se transforma en SÍ
-  noBtn.onclick = () => {
-    noBtn.textContent = "Sí 💚";
-    noBtn.className = "yes";
-    noBtn.style.background = "#4caf50";
-    info.textContent = "🎉 SÍ FINAL 🎉";
-  };
+    game.appendChild(noBtn);
+  }
 
-  game.appendChild(noBtn);
+  renderQuestion();
 }
-
 
 
 function startLevel() {
