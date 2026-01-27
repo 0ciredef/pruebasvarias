@@ -372,6 +372,7 @@ function level9() {
 }
 
 /* NIVEL 10 – FINAL */
+/* NIVEL 10 – QUIÉN QUIERE SER MILLONARIO (FIX REAL) */
 function level10() {
   clearGame();
   info.textContent = "Nivel 10 – Demuestra que mereces el NO 🧠";
@@ -412,27 +413,34 @@ function level10() {
 
     const wrapper = document.createElement("div");
     wrapper.style.position = "absolute";
-    wrapper.style.top = "50%";
     wrapper.style.left = "50%";
+    wrapper.style.top = "50%";
     wrapper.style.transform = "translate(-50%, -50%)";
     wrapper.style.width = "90%";
+    wrapper.style.maxWidth = "340px";
     wrapper.style.display = "flex";
     wrapper.style.flexDirection = "column";
     wrapper.style.gap = "10px";
-    wrapper.style.alignItems = "stretch";
 
-    // Pregunta
-    const qBtn = document.createElement("button");
-    qBtn.className = "fake";
-    qBtn.textContent = questions[current].q;
-    qBtn.style.pointerEvents = "none";
-    wrapper.appendChild(qBtn);
+    // Pregunta (no clickable)
+    const q = document.createElement("div");
+    q.textContent = questions[current].q;
+    q.style.background = "#333";
+    q.style.color = "#fff";
+    q.style.padding = "14px";
+    q.style.borderRadius = "14px";
+    q.style.textAlign = "center";
+    wrapper.appendChild(q);
 
     // Opciones
     questions[current].options.forEach((opt, i) => {
       const b = document.createElement("button");
       b.className = "fake";
       b.textContent = opt;
+
+      // 🔑 CLAVE: anulamos el absolute SOLO aquí
+      b.style.position = "static";
+      b.style.width = "100%";
 
       b.onclick = () => {
         if (i === questions[current].correct) {
@@ -471,6 +479,7 @@ function level10() {
 
   renderQuestion();
 }
+
 
 function startLevel() {
   if (level === 1) level1();
