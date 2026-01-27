@@ -6,71 +6,70 @@
 <title>Pregunta importante</title>
 
 <style>
-  * {
-    box-sizing: border-box;
-    touch-action: manipulation;
-    font-family: system-ui, sans-serif;
-  }
+* {
+  box-sizing: border-box;
+  touch-action: manipulation;
+  font-family: system-ui, sans-serif;
+}
 
-  body {
-    margin: 0;
-    height: 100dvh;
-    background: linear-gradient(135deg, #ffdde1, #ee9ca7);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    overflow: hidden;
-  }
+body {
+  margin: 0;
+  height: 100dvh;
+  background: linear-gradient(135deg, #ffdde1, #ee9ca7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
 
-  .container {
-    width: 100%;
-    max-width: 360px;
-    padding: 20px;
-    text-align: center;
-  }
+.container {
+  width: 100%;
+  max-width: 360px;
+  padding: 16px;
+  text-align: center;
+}
 
-  h1 {
-    font-size: 1.6rem;
-    margin-bottom: 20px;
-  }
+h1 {
+  font-size: 1.5rem;
+  margin-bottom: 12px;
+}
 
-  .buttons {
-    position: relative;
-    height: 280px;
-    width: 100%;
-    overflow: hidden;
-  }
+#game {
+  position: relative;
+  width: 100%;
+  height: 300px;
+  border-radius: 16px;
+  background: rgba(255,255,255,0.3);
+  overflow: hidden;
+}
 
-  button {
-    position: absolute;
-    padding: 14px 20px;
-    font-size: 1.05rem;
-    border-radius: 12px;
-    border: none;
-    cursor: pointer;
-    user-select: none;
-  }
+button {
+  position: absolute;
+  padding: 14px 20px;
+  font-size: 1rem;
+  border-radius: 12px;
+  border: none;
+  user-select: none;
+}
 
-  #yes {
-    background: #4caf50;
-    color: white;
-    left: 50%;
-    top: 60px;
-    transform: translateX(-50%);
-    z-index: 2;
-  }
+#yes {
+  background: #4caf50;
+  color: white;
+  left: 50%;
+  bottom: 10px;
+  transform: translateX(-50%);
+  z-index: 10;
+}
 
-  #no {
-    background: #f44336;
-    color: white;
-    left: 40px;
-    top: 180px;
-  }
+.no {
+  background: #f44336;
+  color: white;
+}
 
-  #counter {
-    margin-top: 12px;
-    font-size: 0.9rem;
-  }
+#counter {
+  margin-top: 10px;
+  font-size: 0.9rem;
+}
 </style>
 </head>
 
@@ -78,108 +77,124 @@
 <div class="container">
   <h1>¿Quieres ver a Fede el 7 de febrero?</h1>
 
-  <div class="buttons" id="area">
+  <div id="game">
     <button id="yes">Sí 💖</button>
-    <button id="no">No 🙃</button>
+    <button id="no" class="no">No 🙃</button>
   </div>
 
   <div id="counter">Nivel: 1</div>
 </div>
 
 <script>
+const game = document.getElementById("game");
 const noBtn = document.getElementById("no");
 const yesBtn = document.getElementById("yes");
 const counter = document.getElementById("counter");
-const area = document.getElementById("area");
 
-let attempts = 0;
 let level = 1;
-let vx = 1.5;
-let vy = 1.5;
-let x = 40;
-let y = 180;
+let attempts = 0;
+let x = 40, y = 40;
+let vx = 1.5, vy = 1.5;
 let bouncing = false;
 
 const frases = [
   "¿Seguro? 😏",
   "La basiquita de Raquel 😌",
   "Ni el Xbox por 1 peso 🎮",
-  "Ping pong destrucción 🏓",
-  "Otra derrota 😎",
-  "Casi… 🙃"
+  "Ping pong: destrucción 🏓",
+  "Otra derrota 😎"
 ];
 
 function vibrar() {
   if (navigator.vibrate) navigator.vibrate(50);
 }
 
-function limites() {
+function limites(btn = noBtn) {
   return {
-    maxX: area.clientWidth - noBtn.offsetWidth,
-    maxY: area.clientHeight - noBtn.offsetHeight
+    maxX: game.clientWidth - btn.offsetWidth,
+    maxY: game.clientHeight - btn.offsetHeight - 50
   };
 }
 
-function randomMove() {
-  const { maxX, maxY } = limites();
-  x = Math.random() * maxX;
-  y = Math.random() * maxY;
-  noBtn.style.left = x + "px";
-  noBtn.style.top = y + "px";
+function moveTo(nx, ny, btn = noBtn) {
+  const { maxX, maxY } = limites(btn);
+  x = Math.max(0, Math.min(nx, maxX));
+  y = Math.max(0, Math.min(ny, maxY));
+  btn.style.left = x + "px";
+  btn.style.top = y + "px";
 }
 
-function dvdBounce() {
+function randomMove(btn = noBtn) {
+  const { maxX, maxY } = limites(btn);
+  moveTo(Math.random() * maxX, Math.random() * maxY, btn);
+}
+
+function dvd() {
   if (bouncing) return;
   bouncing = true;
 
-  function move() {
+  function tick() {
     const { maxX, maxY } = limites();
-
     x += vx;
     y += vy;
 
     if (x <= 0 || x >= maxX) vx *= -1;
     if (y <= 0 || y >= maxY) vy *= -1;
 
-    noBtn.style.left = x + "px";
-    noBtn.style.top = y + "px";
-
-    requestAnimationFrame(move);
+    moveTo(x, y);
+    requestAnimationFrame(tick);
   }
-  move();
+  tick();
 }
 
-function onNoPress() {
+function spawnFake() {
+  const fake = noBtn.cloneNode(true);
+  fake.style.opacity = 0.6;
+  randomMove(fake);
+  fake.addEventListener("pointerdown", () => fake.remove());
+  game.appendChild(fake);
+}
+
+function onNo() {
   attempts++;
   vibrar();
-
   noBtn.textContent = frases[Math.floor(Math.random() * frases.length)];
 
   if (attempts === 2) level = 2;
   if (attempts === 4) level = 3;
   if (attempts === 6) level = 4;
+  if (attempts === 8) level = 5;
 
   counter.textContent = `Nivel: ${level}`;
-
   yesBtn.style.transform =
-    `translateX(-50%) scale(${1 + attempts * 0.07})`;
+    `translateX(-50%) scale(${1 + attempts * 0.08})`;
 
-  if (level === 2) randomMove();
+  if (level === 1) randomMove();
+
+  if (level === 2) {
+    randomMove();
+    randomMove();
+  }
 
   if (level === 3) {
     vx *= 1.2;
     vy *= 1.2;
-    dvdBounce();
+    dvd();
   }
 
   if (level === 4) {
-    noBtn.style.transform = `scale(${0.9 - attempts * 0.03})`;
+    // Laberinto: solo horizontal
+    y = game.clientHeight / 2 - noBtn.offsetHeight;
+    moveTo(Math.random() * limites().maxX, y);
+  }
+
+  if (level === 5) {
+    spawnFake();
     vx *= 1.3;
-    vy *= 1.3;
   }
 }
 
-noBtn.addEventListener("pointerdown", onNoPress);
+noBtn.addEventListener("pointerdown", onNo);
 
 yesBtn.addEventListener("pointerdown", () => {
   alert("Sabía que dirías que sí 💖😌");
