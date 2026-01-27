@@ -243,6 +243,9 @@ function level6() {
   const total = 8;
   const buttons = [];
   const staticIndex = Math.floor(Math.random() * total);
+  let finished = false;
+
+  let intervalId;
 
   for (let i = 0; i < total; i++) {
     const b = document.createElement("button");
@@ -253,25 +256,39 @@ function level6() {
     game.appendChild(b);
 
     b.onclick = () => {
+      if (finished) return;
+
       if (i === staticIndex) {
+        finished = true;
+        clearInterval(intervalId);
+
         b.className = "no";
         b.textContent = "No 🙃";
-        b.onclick = nextLevel;
+
+        setTimeout(() => {
+          nextLevel();
+        }, 500);
       } else {
+        finished = true;
+        clearInterval(intervalId);
         level6();
       }
     };
   }
 
   let moves = 0;
-  const interval = setInterval(() => {
+  intervalId = setInterval(() => {
+    if (finished) return;
+
     buttons.forEach((btn, idx) => {
       if (idx !== staticIndex) place(btn);
     });
+
     moves++;
-    if (moves >= 4) clearInterval(interval);
+    if (moves >= 4) clearInterval(intervalId);
   }, 900);
 }
+
 
 /* NIVEL 7 */
 function level7() {
