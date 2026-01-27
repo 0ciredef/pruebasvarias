@@ -244,89 +244,51 @@ function level5() {
 /* -------- NIVEL FINAL: LABERINTO -------- */
 function level6() {
   clearGame();
-  info.textContent = "Nivel final – Laberinto 😈";
+  info.textContent = "Nivel 6 – Piensa bien 🧠";
 
-  let active = true;
+  let correctIndex = Math.floor(Math.random() * 9);
+  let moves = Array(9).fill(0);
+  const buttons = [];
 
-  // JUGADOR
-  const player = document.createElement("div");
-  player.style.width = "18px";
-  player.style.height = "18px";
-  player.style.background = "#00e5ff";
-  player.style.borderRadius = "50%";
-  player.style.position = "absolute";
-  player.style.left = "10px";
-  player.style.top = "10px";
-  game.appendChild(player);
+  // CREA BOTONES
+  for (let i = 0; i < 9; i++) {
+    const b = document.createElement("button");
+    b.className = "fake";
+    b.textContent = "No";
+    place(b);
+    buttons.push(b);
+    game.appendChild(b);
 
-  // NO (META)
-  noBtn = document.createElement("button");
-  noBtn.className = "no";
-  noBtn.textContent = "NO";
-  noBtn.style.right = "10px";
-  noBtn.style.bottom = "10px";
-  noBtn.onclick = () => {
-    active = false;
-    alert("😳 LLEGASTE AL NO… esto no estaba en el plan");
-  };
-  game.appendChild(noBtn);
-
-  // OBSTÁCULOS "SÍ"
-  const obstacles = [];
-  for (let i = 0; i < 12; i++) {
-    const s = document.createElement("button");
-    s.className = "fake";
-    s.textContent = "Sí";
-    place(s);
-    obstacles.push(s);
-    game.appendChild(s);
+    b.onclick = () => {
+      if (i === correctIndex && moves[i] >= 2) {
+        b.className = "no";
+        b.textContent = "No 🙃";
+        b.onclick = nextLevel;
+      } else {
+        info.textContent = "❌ Ese no… observa mejor";
+        level6();
+      }
+    };
   }
 
-  function resetPlayer() {
-    player.style.left = "10px";
-    player.style.top = "10px";
-  }
+  // MOVIMIENTOS CONTROLADOS
+  let rounds = 0;
+  const interval = setInterval(() => {
+    rounds++;
+    const idx = Math.floor(Math.random() * 9);
+    place(buttons[idx]);
+    moves[idx]++;
 
-  function rect(el) {
-    return el.getBoundingClientRect();
-  }
-
-  function collide(a, b) {
-    return !(
-      a.right < b.left ||
-      a.left > b.right ||
-      a.bottom < b.top ||
-      a.top > b.bottom
-    );
-  }
-
-  game.onpointermove = e => {
-    if (!active) return;
-
-    const rectGame = game.getBoundingClientRect();
-    let x = e.clientX - rectGame.left - 9;
-    let y = e.clientY - rectGame.top - 9;
-
-    // LÍMITES
-    x = Math.max(0, Math.min(x, game.clientWidth - 18));
-    y = Math.max(0, Math.min(y, game.clientHeight - 18));
-
-    player.style.left = x + "px";
-    player.style.top = y + "px";
-
-    const pRect = rect(player);
-
-    // COLISIONES
-    obstacles.forEach(o => {
-      if (collide(pRect, rect(o))) resetPlayer();
-    });
-
-    if (collide(pRect, rect(noBtn))) {
-      active = false;
-      alert("😳 LLEGASTE AL NO… esto no estaba en el plan");
+    // SOLO EL CORRECTO SE MUEVE DOS VECES
+    if (rounds === 2) {
+      place(buttons[correctIndex]);
+      moves[correctIndex]++;
     }
-  };
+
+    if (rounds >= 3) clearInterval(interval);
+  }, 800);
 }
+
 
 
 function startLevel() {
