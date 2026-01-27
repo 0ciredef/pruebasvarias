@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>Decisión Importante</title>
+<title>Decisión importante</title>
 
 <style>
 * {
@@ -15,7 +15,7 @@
 body {
   margin: 0;
   height: 100dvh;
-  background: #0f0f0f;
+  background: #111;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -33,15 +33,15 @@ body {
 
 h1 {
   color: white;
-  font-size: 1.4rem;
   text-align: center;
+  font-size: 1.3rem;
   margin: 10px 0;
 }
 
 #game {
   flex: 1;
-  background: #1c1c1c;
-  border-radius: 16px;
+  background: #222;
+  border-radius: 18px;
   position: relative;
   overflow: hidden;
 }
@@ -58,9 +58,9 @@ button {
   background: #4caf50;
   color: white;
   left: 50%;
-  bottom: 14px;
+  bottom: 70px;
   transform: translateX(-50%);
-  z-index: 20;
+  z-index: 10;
 }
 
 .no {
@@ -85,32 +85,12 @@ button {
   position: absolute;
   width: 8px;
   height: 8px;
-  background: hsl(var(--h), 90%, 60%);
-  animation: fall 2s linear infinite;
+  animation: fall 3s linear infinite;
 }
 
 @keyframes fall {
-  from { transform: translateY(-10px) rotate(0); }
-  to { transform: translateY(110vh) rotate(360deg); }
-}
-
-/* LABERINTO */
-#player {
-  width: 20px;
-  height: 20px;
-  background: white;
-  border-radius: 50%;
-  position: absolute;
-  z-index: 5;
-}
-.wall {
-  position: absolute;
-  background: #333;
-}
-.trap {
-  position: absolute;
-  background: #4caf50;
-  opacity: 0.8;
+  from { transform: translateY(-20px) rotate(0deg); }
+  to { transform: translateY(110vh) rotate(720deg); }
 }
 </style>
 </head>
@@ -118,93 +98,85 @@ button {
 <body>
 <div class="container">
   <h1>¿Quieres ver a Fede el 7 de febrero?</h1>
-  <div id="game"></div>
-  <div id="info"></div>
+
+  <div id="game">
+    <button id="yes">Sí 💖</button>
+  </div>
+
+  <div id="info">Nivel 1</div>
 </div>
 
 <script>
 const game = document.getElementById("game");
+const yesBtn = document.getElementById("yes");
 const info = document.getElementById("info");
 
 let level = 1;
 let noBtn;
 
 function clearGame() {
-  game.innerHTML = "";
+  [...game.children].forEach(e => {
+    if (e.id !== "yes") e.remove();
+  });
 }
 
-function vibrar() {
-  navigator.vibrate?.(40);
+function place(btn) {
+  const maxX = game.clientWidth - btn.offsetWidth;
+  const maxY = game.clientHeight - btn.offsetHeight - 100;
+  btn.style.left = Math.random() * maxX + "px";
+  btn.style.top = Math.random() * maxY + "px";
 }
 
-function limits(el) {
-  return {
-    x: game.clientWidth - el.offsetWidth,
-    y: game.clientHeight - el.offsetHeight - 70
-  };
-}
-
-function place(el) {
-  const l = limits(el);
-  el.style.left = Math.random() * l.x + "px";
-  el.style.top = Math.random() * l.y + "px";
+function nextLevel() {
+  level++;
+  startLevel();
 }
 
 /* -------- CONFETI -------- */
-function fiesta() {
+function party() {
   clearGame();
-  info.textContent = "🎉 SABÍA QUE DIRÍAS QUE SÍ 🎉";
-  for (let i = 0; i < 120; i++) {
+  info.textContent = "🎉 OBVIAMENTE DIJISTE QUE SÍ 🎉";
+  for (let i = 0; i < 80; i++) {
     const c = document.createElement("div");
     c.className = "confetti";
     c.style.left = Math.random() * 100 + "%";
-    c.style.animationDelay = Math.random() * 2 + "s";
-    c.style.setProperty("--h", Math.random() * 360);
+    c.style.background = `hsl(${Math.random()*360},100%,50%)`;
+    c.style.animationDuration = (2 + Math.random()*2) + "s";
     game.appendChild(c);
   }
 }
 
-/* -------- NO BÁSICO -------- */
-function spawnNo(clickable = true) {
+/* -------- NIVELES -------- */
+
+function level1() {
+  clearGame();
+  info.textContent = "Nivel 1 – Fácil";
   noBtn = document.createElement("button");
   noBtn.className = "no";
   noBtn.textContent = "No 🙃";
-  place(noBtn);
-  if (clickable) noBtn.onclick = nextLevel;
-  game.appendChild(noBtn);
-}
-
-/* -------- NIVELES -------- */
-function level1() {
-  info.textContent = "Nivel 1";
-  const yes = document.createElement("button");
-  yes.id = "yes";
-  yes.textContent = "Sí 💖";
-  yes.onclick = fiesta;
-  game.appendChild(yes);
-
-  noBtn = document.createElement("button");
-  noBtn.className = "no";
-  noBtn.textContent = "No";
   noBtn.style.left = "50%";
-  noBtn.style.bottom = "70px";
+  noBtn.style.bottom = "20px";
   noBtn.style.transform = "translateX(-50%)";
   noBtn.onclick = nextLevel;
   game.appendChild(noBtn);
 }
 
 function level2() {
+  clearGame();
   info.textContent = "Nivel 2 – Se mueve";
-  spawnNo();
-  noBtn.onpointerdown = () => {
-    vibrar();
-    place(noBtn);
-  };
+  noBtn = document.createElement("button");
+  noBtn.className = "no";
+  noBtn.textContent = "No 🙃";
+  place(noBtn);
+  noBtn.onpointerenter = () => place(noBtn);
+  noBtn.onclick = nextLevel;
+  game.appendChild(noBtn);
 }
 
 function level3() {
-  info.textContent = "Nivel 3 – Duplicado";
-  for (let i = 0; i < 3; i++) {
+  clearGame();
+  info.textContent = "Nivel 3 – Falsos";
+  for (let i = 0; i < 4; i++) {
     const f = document.createElement("button");
     f.className = "fake";
     f.textContent = "No?";
@@ -212,101 +184,98 @@ function level3() {
     f.onclick = () => f.remove();
     game.appendChild(f);
   }
-  spawnNo();
+  noBtn = document.createElement("button");
+  noBtn.className = "no";
+  noBtn.textContent = "No 🙃";
+  place(noBtn);
+  noBtn.onclick = nextLevel;
+  game.appendChild(noBtn);
 }
 
 function level4() {
+  clearGame();
   info.textContent = "Nivel 4 – Desaparece";
+  noBtn = document.createElement("button");
+  noBtn.className = "no";
+  noBtn.textContent = "No 🙃";
+  place(noBtn);
+  noBtn.onclick = nextLevel;
+  game.appendChild(noBtn);
+
   setInterval(() => {
-    if (noBtn) noBtn.remove();
-    spawnNo();
-  }, 900);
+    if (noBtn) place(noBtn);
+  }, 800);
 }
 
 function level5() {
-  info.textContent = "Nivel 5 – Puertas";
-  let count = 0;
-  for (let i = 0; i < 4; i++) {
-    const d = document.createElement("button");
-    d.className = "fake";
-    d.textContent = "¿No?";
-    place(d);
-    d.onclick = () => {
-      d.remove();
-      if (++count === 3) spawnNo();
-    };
-    game.appendChild(d);
-  }
-}
-
-function level6() {
-  info.textContent = "Nivel 6 – Tiempo";
-  setTimeout(() => {
-    spawnNo();
-    setTimeout(() => noBtn?.remove(), 1000);
-  }, 700);
-}
-
-function level7() {
-  info.textContent = "Nivel 7 – Laberinto";
   clearGame();
+  info.textContent = "Nivel 5 – Tiempo";
+  setTimeout(() => {
+    noBtn = document.createElement("button");
+    noBtn.className = "no";
+    noBtn.textContent = "No 🙃";
+    place(noBtn);
+    noBtn.onclick = nextLevel;
+    game.appendChild(noBtn);
+
+    setTimeout(() => noBtn?.remove(), 1000);
+  }, 500);
+}
+
+/* -------- NIVEL FINAL: LABERINTO -------- */
+function level6() {
+  clearGame();
+  info.textContent = "Nivel final – Laberinto";
 
   const player = document.createElement("div");
-  player.id = "player";
+  player.style.width = "18px";
+  player.style.height = "18px";
+  player.style.background = "#00e5ff";
+  player.style.borderRadius = "50%";
+  player.style.position = "absolute";
   player.style.left = "10px";
   player.style.top = "10px";
   game.appendChild(player);
 
-  spawnNo(true);
-  noBtn.style.left = "320px";
-  noBtn.style.top = "520px";
+  noBtn = document.createElement("button");
+  noBtn.className = "no";
+  noBtn.textContent = "NO";
+  noBtn.style.right = "10px";
+  noBtn.style.bottom = "10px";
+  noBtn.onclick = () => alert("INCREÍBLE 😳 llegaste al NO");
+  game.appendChild(noBtn);
 
-  const walls = [
-    [50,0,20,400],[100,200,250,20],[200,0,20,350]
-  ];
+  for (let i = 0; i < 10; i++) {
+    const s = document.createElement("button");
+    s.className = "fake";
+    s.textContent = "Sí";
+    place(s);
+    s.onclick = () => {
+      player.style.left = "10px";
+      player.style.top = "10px";
+    };
+    game.appendChild(s);
+  }
 
-  walls.forEach(w => {
-    const wall = document.createElement("div");
-    wall.className = "wall";
-    wall.style.left = w[0]+"px";
-    wall.style.top = w[1]+"px";
-    wall.style.width = w[2]+"px";
-    wall.style.height = w[3]+"px";
-    game.appendChild(wall);
+  game.addEventListener("pointermove", e => {
+    const rect = game.getBoundingClientRect();
+    player.style.left = (e.clientX - rect.left - 9) + "px";
+    player.style.top = (e.clientY - rect.top - 9) + "px";
   });
-
-  game.onpointermove = e => {
-    player.style.left = e.offsetX + "px";
-    player.style.top = e.offsetY + "px";
-
-    const p = player.getBoundingClientRect();
-    const n = noBtn.getBoundingClientRect();
-    if (
-      p.left < n.right &&
-      p.right > n.left &&
-      p.top < n.bottom &&
-      p.bottom > n.top
-    ) {
-      nextLevel();
-    }
-  };
 }
 
-function nextLevel() {
-  vibrar();
-  clearGame();
-  level++;
-  if (level === 2) level2();
+function startLevel() {
+  if (level === 1) level1();
+  else if (level === 2) level2();
   else if (level === 3) level3();
   else if (level === 4) level4();
   else if (level === 5) level5();
-  else if (level === 6) level6();
-  else if (level === 7) level7();
-  else alert("Ok ya… imposible decir que no 😂");
+  else level6();
 }
 
-/* START */
-level1();
+yesBtn.onclick = party;
+
+startLevel();
 </script>
 </body>
 </html>
