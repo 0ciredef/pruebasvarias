@@ -2,419 +2,220 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>Decisión importante</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>¿Quieres ver a Fede?</title>
 
 <style>
-* {
-  box-sizing: border-box;
-  font-family: system-ui, sans-serif;
-  touch-action: none;
-}
+  body {
+    margin: 0;
+    font-family: system-ui, sans-serif;
+    background: linear-gradient(135deg, #ffdde1, #ee9ca7);
+    height: 100vh;
+    overflow: hidden;
+  }
 
-body {
-  margin: 0;
-  height: 100dvh;
-  background: #111;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  overflow: hidden;
-}
+  #game {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    padding: 16px;
+    box-sizing: border-box;
+  }
 
-.container {
-  width: 100%;
-  max-width: 390px;
-  height: 100%;
-  padding: 12px;
-  display: flex;
-  flex-direction: column;
-}
+  h1 {
+    text-align: center;
+    font-size: 1.4rem;
+  }
 
-h1 {
-  color: white;
-  text-align: center;
-  font-size: 1.25rem;
-  margin: 10px 0;
-}
+  button {
+    padding: 14px 18px;
+    font-size: 1rem;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+  }
 
-#game {
-  flex: 1;
-  background: #222;
-  border-radius: 18px;
-  position: relative;
-  overflow: hidden;
-}
+  .yes {
+    background: #2ecc71;
+    color: white;
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    z-index: 10;
+  }
 
-button {
-  border: none;
-  border-radius: 14px;
-  padding: 14px 18px;
-  font-size: 1rem;
-  position: absolute;
-}
+  .no {
+    background: #e74c3c;
+    color: white;
+  }
 
-#yes {
-  background: #4caf50;
-  color: white;
-  left: 50%;
-  bottom: 70px;
-  transform: translateX(-50%);
-  z-index: 10;
-}
+  .fake {
+    background: #34495e;
+    color: white;
+  }
 
-.no {
-  background: #f44336;
-  color: white;
-}
+  .center {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    margin-top: 20px;
+  }
 
-.fake {
-  background: #555;
-  color: #bbb;
-}
+  .option {
+    width: 100%;
+    max-width: 400px;
+  }
 
-#info {
-  color: #aaa;
-  text-align: center;
-  font-size: 0.85rem;
-  margin-top: 6px;
-}
+  .question-box {
+    background: white;
+    border-radius: 16px;
+    padding: 16px;
+    max-width: 500px;
+    margin: 0 auto;
+  }
 
-/* CONFETI */
-.confetti {
-  position: absolute;
-  width: 8px;
-  height: 8px;
-  animation: fall 3s linear infinite;
-}
-
-@keyframes fall {
-  from { transform: translateY(-20px) rotate(0deg); }
-  to { transform: translateY(110vh) rotate(720deg); }
-}
+  .question {
+    font-weight: bold;
+    margin-bottom: 12px;
+  }
 </style>
 </head>
 
 <body>
-<div class="container">
-  <h1>¿Quieres ver a Fede el 7 de febrero?</h1>
 
-  <div id="game">
-    <button id="yes">Sí 💖</button>
-  </div>
+<button class="yes" onclick="celebrate()">SÍ 💚</button>
 
-  <div id="info">Nivel 1</div>
+<div id="game">
+  <h1 id="info">¿Quieres ver a Fede el 7 de febrero?</h1>
 </div>
 
 <script>
+let level = 1;
 const game = document.getElementById("game");
-const yesBtn = document.getElementById("yes");
 const info = document.getElementById("info");
 
-let level = 1;
-let noBtn;
-
-/* UTILIDADES */
 function clearGame() {
-  [...game.children].forEach(e => {
-    if (e.id !== "yes") e.remove();
-  });
-}
-
-function place(btn) {
-  const maxX = game.clientWidth - btn.offsetWidth;
-  const maxY = game.clientHeight - btn.offsetHeight - 100;
-  btn.style.left = Math.random() * maxX + "px";
-  btn.style.top = Math.random() * maxY + "px";
+  [...game.querySelectorAll("div, button:not(.yes)")].forEach(e => e.remove());
 }
 
 function nextLevel() {
   level++;
-  startLevel();
+  window["level" + level]();
 }
 
-/* CONFETI */
-function party() {
+function celebrate() {
   clearGame();
-  info.textContent = "🎉 OBVIAMENTE DIJISTE QUE SÍ 🎉";
-  for (let i = 0; i < 90; i++) {
-    const c = document.createElement("div");
-    c.className = "confetti";
-    c.style.left = Math.random() * 100 + "%";
-    c.style.background = `hsl(${Math.random()*360},100%,50%)`;
-    c.style.animationDuration = (2 + Math.random()*2) + "s";
-    game.appendChild(c);
-  }
+  document.body.style.background = "linear-gradient(135deg, #00c6ff, #0072ff)";
+  info.textContent = "🎉🎉🎉 SÍIIII 🎉🎉🎉";
 }
 
-/* NIVELES */
+/* ---------- NIVELES 1–9 (resumidos y estables) ---------- */
+for (let i = 1; i <= 9; i++) {
+  window["level" + i] = function () {
+    clearGame();
+    info.textContent = "Nivel " + i;
 
-function level1() {
-  clearGame();
-  info.textContent = "Nivel 1 – Fácil";
-  noBtn = document.createElement("button");
-  noBtn.className = "no";
-  noBtn.textContent = "No 🙃";
-  noBtn.style.left = "50%";
-  noBtn.style.bottom = "20px";
-  noBtn.style.transform = "translateX(-50%)";
-  noBtn.onclick = nextLevel;
-  game.appendChild(noBtn);
+    const no = document.createElement("button");
+    no.className = "no";
+    no.textContent = "No";
+    no.style.marginTop = "40px";
+    no.onclick = nextLevel;
+
+    game.appendChild(no);
+  };
 }
 
-function level2() {
-  clearGame();
-  info.textContent = "Nivel 2 – Se mueve";
-  noBtn = document.createElement("button");
-  noBtn.className = "no";
-  noBtn.textContent = "No 🙃";
-  place(noBtn);
-  noBtn.onpointerenter = () => place(noBtn);
-  noBtn.onclick = nextLevel;
-  game.appendChild(noBtn);
-}
+/* ---------- NIVEL 10 – QUIÉN QUIERE SER MILLONARIO ---------- */
 
-function level3() {
-  clearGame();
-  info.textContent = "Nivel 3 – Falsos";
-  for (let i = 0; i < 4; i++) {
-    const f = document.createElement("button");
-    f.className = "fake";
-    f.textContent = "No?";
-    place(f);
-    f.onclick = () => f.remove();
-    game.appendChild(f);
-  }
-  noBtn = document.createElement("button");
-  noBtn.className = "no";
-  noBtn.textContent = "No 🙃";
-  place(noBtn);
-  noBtn.onclick = nextLevel;
-  game.appendChild(noBtn);
-}
-
-function level4() {
-  clearGame();
-  info.textContent = "Nivel 4 – Desaparece";
-  noBtn = document.createElement("button");
-  noBtn.className = "no";
-  noBtn.textContent = "No 🙃";
-  place(noBtn);
-  noBtn.onclick = nextLevel;
-  game.appendChild(noBtn);
-
-  setInterval(() => place(noBtn), 800);
-}
-
-function level5() {
-  clearGame();
-  info.textContent = "Nivel 5 – Paciencia ⏳";
-
-  let active = true;
-
-  function spawn() {
-    if (!active) return;
-
-    noBtn = document.createElement("button");
-    noBtn.className = "no";
-    noBtn.textContent = "No 🙃";
-    place(noBtn);
-    noBtn.onclick = () => {
-      active = false;
-      nextLevel();
-    };
-    game.appendChild(noBtn);
-
-    setTimeout(() => {
-      if (noBtn && active) {
-        noBtn.remove();
-        setTimeout(spawn, 600);
-      }
-    }, 900);
-  }
-  spawn();
-}
-
-/* NIVEL 6 – EL QUE NO SE MUEVE */
-function level6() {
-  clearGame();
-  info.textContent = "Nivel 6 – El que NO se mueve 🧠";
-
-  const total = 8;
-  const buttons = [];
-  const staticIndex = Math.floor(Math.random() * total);
-  let finished = false;
-
-  let intervalId;
-
-  for (let i = 0; i < total; i++) {
-    const b = document.createElement("button");
-    b.className = "fake";
-    b.textContent = "No";
-    place(b);
-    buttons.push(b);
-    game.appendChild(b);
-
-    b.onclick = () => {
-      if (finished) return;
-
-      if (i === staticIndex) {
-        finished = true;
-        clearInterval(intervalId);
-
-        b.className = "no";
-        b.textContent = "No 🙃";
-
-        setTimeout(() => {
-          nextLevel();
-        }, 500);
-      } else {
-        finished = true;
-        clearInterval(intervalId);
-        level6();
-      }
-    };
-  }
-
-  let moves = 0;
-  intervalId = setInterval(() => {
-    if (finished) return;
-
-    buttons.forEach((btn, idx) => {
-      if (idx !== staticIndex) place(btn);
-    });
-
-    moves++;
-    if (moves >= 4) clearInterval(intervalId);
-  }, 900);
-}
-
-
-/* NIVEL 7 */
-function level7() {
-  clearGame();
-  info.textContent = "Nivel 7 – Uno es diferente";
-
-  const total = 9;
-  const correct = Math.floor(Math.random() * total);
-
-  for (let i = 0; i < total; i++) {
-    const b = document.createElement("button");
-    b.className = "fake";
-    b.textContent = i === correct ? "No " : "No";
-    place(b);
-    game.appendChild(b);
-
-    b.onclick = () => {
-      if (i === correct) {
-        b.className = "no";
-        b.textContent = "No 🙃";
-        b.onclick = nextLevel;
-      } else level7();
-    };
-  }
-}
-
-/* NIVEL 8 */
-function level8() {
-  clearGame();
-  info.textContent = "Nivel 8 – Espera…";
-
-  const total = 7;
-  const delayed = Math.floor(Math.random() * total);
-
-  for (let i = 0; i < total; i++) {
-    const b = document.createElement("button");
-    b.className = "fake";
-    b.textContent = "No";
-    place(b);
-    game.appendChild(b);
-
-    b.onclick = () => {
-      if (i === delayed) {
-        b.className = "no";
-        b.textContent = "No 🙃";
-        b.onclick = nextLevel;
-      } else level8();
-    };
-
-    setTimeout(() => {
-      setInterval(() => place(b), 1200);
-    }, i === delayed ? 2000 : 0);
-  }
-}
-
-/* NIVEL 9 */
-function level9() {
-  clearGame();
-  info.textContent = "Nivel 9 – Prueba";
-
-  const total = 8;
-  const correct = Math.floor(Math.random() * total);
-
-  for (let i = 0; i < total; i++) {
-    const b = document.createElement("button");
-    b.className = "fake";
-    b.textContent = "No";
-    place(b);
-    game.appendChild(b);
-
-    if (i !== correct) b.onpointerenter = () => place(b);
-
-    b.onclick = () => {
-      if (i === correct) {
-        b.className = "no";
-        b.textContent = "No 🙃";
-        b.onclick = nextLevel;
-      } else level9();
-    };
-  }
-}
-
-/* NIVEL 10 – FINAL */
 function level10() {
   clearGame();
-  info.textContent = "Nivel 10 – Solo uno dice la verdad";
+  info.textContent = "Nivel 10 – ¿Quién quiere decir NO? 🧠";
 
-  const texts = [
-    "El NO está aquí",
-    "El NO no está aquí",
-    "El botón de la izquierda miente"
+  const questions = [
+    {
+      q: "¿Cuál es el planeta más grande del sistema solar?",
+      options: ["Marte", "Júpiter", "Saturno", "Neptuno"],
+      correct: 1
+    },
+    {
+      q: "¿En qué año cayó el Muro de Berlín?",
+      options: ["1985", "1987", "1989", "1991"],
+      correct: 2
+    },
+    {
+      q: "¿Quién escribió 'Cien años de soledad'?",
+      options: ["Vargas Llosa", "Borges", "García Márquez", "Cortázar"],
+      correct: 2
+    },
+    {
+      q: "¿Cuál es el elemento químico con símbolo Au?",
+      options: ["Plata", "Oro", "Cobre", "Hierro"],
+      correct: 1
+    },
+    {
+      q: "¿Cuál es la capital de Canadá?",
+      options: ["Toronto", "Vancouver", "Montreal", "Ottawa"],
+      correct: 3
+    }
   ];
-  const correct = 1;
 
-  texts.forEach((t, i) => {
-    const b = document.createElement("button");
-    b.className = "fake";
-    b.textContent = t;
-    place(b);
-    game.appendChild(b);
+  let current = 0;
 
-    b.onclick = () => {
-      if (i === correct) {
-        b.className = "no";
-        b.textContent = "NO 🙃";
-        b.onclick = () => alert("🏆 Llegaste al final… respeto total");
-      } else level10();
-    };
-  });
+  const box = document.createElement("div");
+  box.className = "question-box";
+  game.appendChild(box);
+
+  function renderQuestion() {
+    box.innerHTML = "";
+
+    const q = document.createElement("div");
+    q.className = "question";
+    q.textContent = `Pregunta ${current + 1}: ${questions[current].q}`;
+    box.appendChild(q);
+
+    questions[current].options.forEach((opt, i) => {
+      const b = document.createElement("button");
+      b.className = "option fake";
+      b.textContent = opt;
+
+      b.onclick = () => {
+        if (i === questions[current].correct) {
+          current++;
+          if (current === questions.length) {
+            unlockNo();
+          } else {
+            renderQuestion();
+          }
+        } else {
+          alert("❌ Incorrecto. Vuelve a empezar.");
+          current = 0;
+          renderQuestion();
+        }
+      };
+
+      box.appendChild(b);
+    });
+  }
+
+  function unlockNo() {
+    clearGame();
+    info.textContent = "Has desbloqueado el NO 🏆";
+
+    const no = document.createElement("button");
+    no.className = "no";
+    no.textContent = "NO (final)";
+    no.style.marginTop = "40px";
+    no.onclick = celebrate;
+
+    game.appendChild(no);
+  }
+
+  renderQuestion();
 }
 
-function startLevel() {
-  if (level === 1) level1();
-  else if (level === 2) level2();
-  else if (level === 3) level3();
-  else if (level === 4) level4();
-  else if (level === 5) level5();
-  else if (level === 6) level6();
-  else if (level === 7) level7();
-  else if (level === 8) level8();
-  else if (level === 9) level9();
-  else level10();
-}
-
-yesBtn.onclick = party;
-startLevel();
+level1();
 </script>
+
 </body>
 </html>
