@@ -473,20 +473,17 @@ function level10() {
   noBtn.style.top = "50%";
   noBtn.style.transform = "translate(-50%, -50%)";
 
+  // Al tocarlo, se transforma en SÍ
   noBtn.onclick = () => {
-    // transformación final
-    noBtn.className = "";
+    noBtn.textContent = "Sí 💚";
+    noBtn.className = "yes";
     noBtn.style.background = "#4caf50";
-    noBtn.style.color = "white";
-    noBtn.textContent = "Sí 💖";
-
-    setTimeout(() => {
-      party();
-    }, 300);
+    info.textContent = "🎉 SÍ FINAL 🎉";
   };
 
   game.appendChild(noBtn);
 }
+
 
 
 function startLevel() {
