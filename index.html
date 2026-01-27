@@ -244,8 +244,11 @@ function level5() {
 /* -------- NIVEL FINAL: LABERINTO -------- */
 function level6() {
   clearGame();
-  info.textContent = "Nivel final – Laberinto";
+  info.textContent = "Nivel final – Laberinto 😈";
 
+  let active = true;
+
+  // JUGADOR
   const player = document.createElement("div");
   player.style.width = "18px";
   player.style.height = "18px";
@@ -256,32 +259,75 @@ function level6() {
   player.style.top = "10px";
   game.appendChild(player);
 
+  // NO (META)
   noBtn = document.createElement("button");
   noBtn.className = "no";
   noBtn.textContent = "NO";
   noBtn.style.right = "10px";
   noBtn.style.bottom = "10px";
-  noBtn.onclick = () => alert("INCREÍBLE 😳 llegaste al NO");
+  noBtn.onclick = () => {
+    active = false;
+    alert("😳 LLEGASTE AL NO… esto no estaba en el plan");
+  };
   game.appendChild(noBtn);
 
-  for (let i = 0; i < 10; i++) {
+  // OBSTÁCULOS "SÍ"
+  const obstacles = [];
+  for (let i = 0; i < 12; i++) {
     const s = document.createElement("button");
     s.className = "fake";
     s.textContent = "Sí";
     place(s);
-    s.onclick = () => {
-      player.style.left = "10px";
-      player.style.top = "10px";
-    };
+    obstacles.push(s);
     game.appendChild(s);
   }
 
-  game.addEventListener("pointermove", e => {
-    const rect = game.getBoundingClientRect();
-    player.style.left = (e.clientX - rect.left - 9) + "px";
-    player.style.top = (e.clientY - rect.top - 9) + "px";
-  });
+  function resetPlayer() {
+    player.style.left = "10px";
+    player.style.top = "10px";
+  }
+
+  function rect(el) {
+    return el.getBoundingClientRect();
+  }
+
+  function collide(a, b) {
+    return !(
+      a.right < b.left ||
+      a.left > b.right ||
+      a.bottom < b.top ||
+      a.top > b.bottom
+    );
+  }
+
+  game.onpointermove = e => {
+    if (!active) return;
+
+    const rectGame = game.getBoundingClientRect();
+    let x = e.clientX - rectGame.left - 9;
+    let y = e.clientY - rectGame.top - 9;
+
+    // LÍMITES
+    x = Math.max(0, Math.min(x, game.clientWidth - 18));
+    y = Math.max(0, Math.min(y, game.clientHeight - 18));
+
+    player.style.left = x + "px";
+    player.style.top = y + "px";
+
+    const pRect = rect(player);
+
+    // COLISIONES
+    obstacles.forEach(o => {
+      if (collide(pRect, rect(o))) resetPlayer();
+    });
+
+    if (collide(pRect, rect(noBtn))) {
+      active = false;
+      alert("😳 LLEGASTE AL NO… esto no estaba en el plan");
+    }
+  };
 }
+
 
 function startLevel() {
   if (level === 1) level1();
