@@ -511,14 +511,32 @@ function level10() {
 
     let x = Math.random() * (game.clientWidth - 120);
     let y = Math.random() * (game.clientHeight - 160);
-    let vx = 2.2;
-    let vy = 2.6;
+
+    // 🚀 VELOCIDAD ALTA (DVD old school)
+    let vx = 4.2;
+    let vy = 4.8;
+
     let bouncing = true;
+    let isYes = false;
 
     btn.style.left = x + "px";
     btn.style.top = y + "px";
 
     game.appendChild(btn);
+
+    function toggleText() {
+      isYes = !isYes;
+
+      if (isYes) {
+        btn.className = "";
+        btn.id = "yes";
+        btn.textContent = "Sí 💖";
+      } else {
+        btn.id = "";
+        btn.className = "no";
+        btn.textContent = "No 🙃";
+      }
+    }
 
     function move() {
       if (!bouncing) return;
@@ -529,8 +547,19 @@ function level10() {
       const maxX = game.clientWidth - btn.offsetWidth;
       const maxY = game.clientHeight - btn.offsetHeight;
 
-      if (x <= 0 || x >= maxX) vx *= -1;
-      if (y <= 0 || y >= maxY) vy *= -1;
+      let bounced = false;
+
+      if (x <= 0 || x >= maxX) {
+        vx *= -1;
+        bounced = true;
+      }
+
+      if (y <= 0 || y >= maxY) {
+        vy *= -1;
+        bounced = true;
+      }
+
+      if (bounced) toggleText();
 
       btn.style.left = x + "px";
       btn.style.top = y + "px";
@@ -543,6 +572,7 @@ function level10() {
     btn.onclick = () => {
       bouncing = false;
 
+      // 💖 FINAL INEVITABLE
       btn.className = "";
       btn.id = "yes";
       btn.textContent = "Sí 💖";
@@ -556,6 +586,7 @@ function level10() {
 
   renderQuestion();
 }
+
 
 
 
