@@ -113,9 +113,15 @@ const info = document.getElementById("info");
 
 let level = 1;
 let noBtn;
+let moveInterval = null;
 
 /* UTILIDADES */
 function clearGame() {
+  if (moveInterval) {
+    clearInterval(moveInterval);
+    moveInterval = null;
+  }
+
   [...game.children].forEach(e => {
     if (e.id !== "yes") e.remove();
   });
@@ -207,6 +213,7 @@ function level3() {
 function level4() {
   clearGame();
   info.textContent = "Nivel 4 – Desaparece";
+
   noBtn = document.createElement("button");
   noBtn.className = "no";
   noBtn.textContent = "No 🙃";
@@ -214,38 +221,32 @@ function level4() {
   noBtn.onclick = nextLevel;
   game.appendChild(noBtn);
 
-  setInterval(() => place(noBtn), 350);  
+  moveInterval = setInterval(() => {
+    place(noBtn);
+  }, 350); // 👈 rápido
 }
+
 
 function level5() {
   clearGame();
-  
   info.textContent = "Nivel 5 – Paciencia ⏳";
 
-  let active = true;
+  noBtn = document.createElement("button");
+  noBtn.className = "no";
+  noBtn.textContent = "No 🙃";
+  place(noBtn);
+  game.appendChild(noBtn);
 
-  function spawn() {
-    if (!active) return;
-    setInterval(() => place(noBtn), 800);
-    noBtn = document.createElement("button");
-    noBtn.className = "no";
-    noBtn.textContent = "No 🙃";
+  moveInterval = setInterval(() => {
     place(noBtn);
-    noBtn.onclick = () => {
-      active = false;
-      nextLevel();
-    };
-    game.appendChild(noBtn);
-  
-    setTimeout(() => {
-      if (noBtn && active) {
-        noBtn.remove();
-        setTimeout(spawn, 600);
-      }
-    }, 900);
-  }
-  spawn();
+  }, 900); // 👈 más lento
+
+  noBtn.onclick = () => {
+    clearInterval(moveInterval);
+    nextLevel();
+  };
 }
+
 
 /* NIVEL 6 – EL QUE NO SE MUEVE */
 function level6() {
