@@ -459,37 +459,44 @@ function level10() {
     wrapper.style.top = "50%";
     wrapper.style.transform = "translate(-50%, -50%)";
     wrapper.style.width = "92%";
-    wrapper.style.maxWidth = "340px";
+    wrapper.style.maxWidth = "360px";
     wrapper.style.display = "flex";
     wrapper.style.flexDirection = "column";
     wrapper.style.gap = "12px";
 
-    const q = document.createElement("div");
-    q.textContent = questions[current].q;
-    q.style.background = "#333";
-    q.style.color = "#fff";
-    q.style.padding = "14px";
-    q.style.borderRadius = "14px";
-    q.style.textAlign = "center";
-    wrapper.appendChild(q);
+    const questionBox = document.createElement("div");
+    questionBox.textContent = questions[current].q;
+    questionBox.style.background = "#222";
+    questionBox.style.color = "#fff";
+    questionBox.style.padding = "16px";
+    questionBox.style.borderRadius = "14px";
+    questionBox.style.textAlign = "center";
+    questionBox.style.fontSize = "16px";
+
+    wrapper.appendChild(questionBox);
 
     questions[current].options.forEach((opt, i) => {
-      const b = document.createElement("button");
-      b.className = "fake";
-      b.textContent = opt;
-      b.style.width = "100%";
+      const btn = document.createElement("button");
+      btn.textContent = opt;
+      btn.className = "fake";
+      btn.style.width = "100%";
+      btn.style.position = "static";
 
-      b.onclick = () => {
+      btn.onclick = () => {
         if (i === questions[current].correct) {
           current++;
-          current === questions.length ? unlockNo() : renderQuestion();
+          if (current === questions.length) {
+            unlockNo();
+          } else {
+            renderQuestion();
+          }
         } else {
           current = 0;
           renderQuestion();
         }
       };
 
-      wrapper.appendChild(b);
+      wrapper.appendChild(btn);
     });
 
     game.appendChild(wrapper);
@@ -507,7 +514,7 @@ function level10() {
 
     game.appendChild(btn);
 
-    // 🔒 Congelar tamaño
+    // 🔒 Fijar tamaño
     const w = btn.offsetWidth;
     const h = btn.offsetHeight;
     btn.style.width = w + "px";
@@ -577,6 +584,7 @@ function level10() {
 
   renderQuestion();
 }
+
 
 
 
