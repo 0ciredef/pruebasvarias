@@ -501,29 +501,60 @@ function level10() {
     game.appendChild(wrapper);
   }
 
-  function unlockNo() {
-    clearGame();
-    info.textContent = "Desbloqueaste el NO final 😈";
+ function unlockNo() {
+  clearGame();
+  info.textContent = "Atrápalo… 😈";
 
-    const finalBtn = document.createElement("button");
-    finalBtn.className = "no";
-    finalBtn.textContent = "No 🙃";
-    finalBtn.style.left = "50%";
-    finalBtn.style.top = "50%";
-    finalBtn.style.transform = "translate(-50%, -50%)";
+  const btn = document.createElement("button");
+  btn.className = "no";
+  btn.textContent = "No 🙃";
 
-    finalBtn.onclick = () => {
-      // ✨ transformación mágica
-      finalBtn.className = "";
-      finalBtn.id = "yes";
-      finalBtn.textContent = "Sí 💖";
+  let x = Math.random() * (game.clientWidth - 120);
+  let y = Math.random() * (game.clientHeight - 160);
+  let vx = 2.2;
+  let vy = 2.6;
+  let bouncing = true;
 
-      info.textContent = "Sabíamos que sí 🥹";
+  btn.style.left = x + "px";
+  btn.style.top = y + "px";
 
-      setTimeout(() => {
-        party();
-      }, 600);
-    };
+  game.appendChild(btn);
+
+  function move() {
+    if (!bouncing) return;
+
+    x += vx;
+    y += vy;
+
+    const maxX = game.clientWidth - btn.offsetWidth;
+    const maxY = game.clientHeight - btn.offsetHeight;
+
+    if (x <= 0 || x >= maxX) vx *= -1;
+    if (y <= 0 || y >= maxY) vy *= -1;
+
+    btn.style.left = x + "px";
+    btn.style.top = y + "px";
+
+    requestAnimationFrame(move);
+  }
+
+  move();
+
+  btn.onclick = () => {
+    bouncing = false;
+
+    // Se transforma en SÍ
+    btn.className = "";
+    btn.id = "yes";
+    btn.textContent = "Sí 💖";
+    btn.style.left = "50%";
+    btn.style.top = "50%";
+    btn.style.transform = "translate(-50%, -50%)";
+
+    btn.onclick = party;
+  };
+}
+
 
     game.appendChild(finalBtn);
   }
