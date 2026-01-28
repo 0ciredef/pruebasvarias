@@ -476,20 +476,6 @@ function level10() {
   let transformed = false;
 
   noBtn.onclick = () => {
-  // Desactivar más clicks
-  noBtn.onclick = null;
-
-  // Transformación visual
-  noBtn.textContent = "Sí 💖";
-  noBtn.style.background = "#4caf50";
-  noBtn.style.transform += " scale(1.15)";
-  info.textContent = "Sabía que no era un NO de verdad 🥹";
-
-  // Pequeña pausa dramática
-  setTimeout(() => {
-    party();
-  }, 700);
-};
     if (!transformed) {
       // Primera vez: se transforma en SÍ
       transformed = true;
