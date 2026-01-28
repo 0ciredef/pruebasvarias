@@ -463,19 +463,35 @@ function level10() {
   }
 
   function unlockNo() {
-    clearGame();
-    info.textContent = "Desbloqueaste el NO final 😈";
+  clearGame();
+  info.textContent = "¿Seguro que era un NO? 😏";
 
-    noBtn = document.createElement("button");
-    noBtn.className = "no";
-    noBtn.textContent = "No 🙃";
-    noBtn.style.left = "50%";
-    noBtn.style.top = "50%";
-    noBtn.style.transform = "translate(-50%, -50%)";
-    noBtn.onclick = party;
+  noBtn = document.createElement("button");
+  noBtn.className = "no";
+  noBtn.textContent = "No 🙃";
+  noBtn.style.left = "50%";
+  noBtn.style.top = "50%";
+  noBtn.style.transform = "translate(-50%, -50%)";
 
-    game.appendChild(noBtn);
-  }
+  let transformed = false;
+
+  noBtn.onclick = () => {
+    if (!transformed) {
+      // Primera vez: se transforma en SÍ
+      transformed = true;
+      noBtn.className = "";
+      noBtn.id = "yes";
+      noBtn.textContent = "Sí 💖";
+      noBtn.style.background = "#4caf50";
+      info.textContent = "Sabíamos que ibas a decir que sí 😌";
+    } else {
+      // Segunda vez: fiesta
+      party();
+    }
+  };
+
+  game.appendChild(noBtn);
+}
 
   renderQuestion();
 }
