@@ -471,17 +471,16 @@ function level10() {
     qBox.style.padding = "16px";
     qBox.style.borderRadius = "14px";
     qBox.style.textAlign = "center";
-
     wrapper.appendChild(qBox);
 
     questions[current].options.forEach((opt, i) => {
       const b = document.createElement("button");
-      b.textContent = opt;
       b.className = "fake";
+      b.textContent = opt;
       b.style.position = "static";
       b.style.width = "100%";
 
-      b.onclick = () => {
+      b.onpointerdown = () => {
         if (i === questions[current].correct) {
           current++;
           current === questions.length ? unlockNo() : renderQuestion();
@@ -505,11 +504,10 @@ function level10() {
     btn.textContent = "No 🙃";
     btn.className = "no";
     btn.style.position = "absolute";
-    btn.style.pointerEvents = "auto";
 
     game.appendChild(btn);
 
-    // 🔒 Congelar tamaño
+    // 🔒 congelar tamaño
     const w = btn.offsetWidth;
     const h = btn.offsetHeight;
     btn.style.width = w + "px";
@@ -518,17 +516,16 @@ function level10() {
     let x = Math.random() * (game.clientWidth - w);
     let y = Math.random() * (game.clientHeight - h);
 
-    let vx = 7;
-    let vy = 8;
+    let vx = 8;
+    let vy = 9;
 
     let isYes = false;
     let running = true;
 
     function setState(yes) {
       isYes = yes;
-
       if (yes) {
-        btn.id = "yes";      // 🟢 verde real
+        btn.id = "yes";
         btn.className = "";
         btn.textContent = "Sí 💖";
       } else {
@@ -553,14 +550,14 @@ function level10() {
 
       if (x <= 0 || x >= maxX) {
         vx *= -1;
-        bounced = true;
         x = Math.max(0, Math.min(x, maxX));
+        bounced = true;
       }
 
       if (y <= 0 || y >= maxY) {
         vy *= -1;
-        bounced = true;
         y = Math.max(0, Math.min(y, maxY));
+        bounced = true;
       }
 
       if (bounced) setState(!isYes);
@@ -573,8 +570,11 @@ function level10() {
 
     move();
 
-    btn.onclick = () => {
-      // ❗ solo funciona si ES "Sí"
+    // ✅ FIX DEFINITIVO
+    btn.onpointerdown = (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+
       if (!isYes) return;
 
       running = false;
@@ -584,12 +584,13 @@ function level10() {
       btn.style.top = "50%";
       btn.style.transform = "translate(-50%, -50%)";
 
-      btn.onclick = party;
+      btn.onpointerdown = party;
     };
   }
 
   renderQuestion();
 }
+
 
 
 
