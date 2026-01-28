@@ -226,7 +226,7 @@ function level5() {
 
   function spawn() {
     if (!active) return;
-
+    setInterval(() => place(noBtn), 800);
     noBtn = document.createElement("button");
     noBtn.className = "no";
     noBtn.textContent = "No 🙃";
