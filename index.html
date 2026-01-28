@@ -502,19 +502,6 @@ function level10() {
     options: ["Einstein", "Galileo", "Newton", "Kepler"],
     correct: 2
   }
-
-    // ⚫ ULTRA DIFÍCILES (sin Nietzsche ni Dosto)
-{
-  q: "¿Qué científico propuso el principio de incertidumbre?",
-  options: ["Niels Bohr", "Albert Einstein", "Werner Heisenberg", "Max Planck"],
-  correct: 2
-},
-{
-  q: "¿Cuál de estos imperios nunca tuvo salida directa al mar?",
-  options: ["Imperio Romano", "Imperio Otomano", "Imperio Inca", "Imperio Persa"],
-  correct: 2
-}
-
 ];
 
 
@@ -524,7 +511,7 @@ function level10() {
 
   function renderQuestion() {
     clearGame();
-    info.textContent = `Nivel 10 – Pregunta ${current + 1} de 10`;
+    info.textContent = `Nivel 10 – Pregunta ${current + 1} de 5`;
 
     const wrapper = document.createElement("div");
     wrapper.style.position = "absolute";
@@ -664,16 +651,6 @@ function level10() {
 
   renderQuestion();
 }
-
-
-
-
-
-
-
-
-
-
 
 
 
