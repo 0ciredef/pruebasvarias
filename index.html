@@ -458,11 +458,11 @@ function level10() {
     wrapper.style.left = "50%";
     wrapper.style.top = "50%";
     wrapper.style.transform = "translate(-50%, -50%)";
-    wrapper.style.width = "90%";
+    wrapper.style.width = "92%";
     wrapper.style.maxWidth = "340px";
     wrapper.style.display = "flex";
     wrapper.style.flexDirection = "column";
-    wrapper.style.gap = "10px";
+    wrapper.style.gap = "12px";
 
     const q = document.createElement("div");
     q.textContent = questions[current].q;
@@ -471,13 +471,13 @@ function level10() {
     q.style.padding = "14px";
     q.style.borderRadius = "14px";
     q.style.textAlign = "center";
+    q.style.fontSize = "0.95rem";
     wrapper.appendChild(q);
 
     questions[current].options.forEach((opt, i) => {
       const b = document.createElement("button");
       b.className = "fake";
       b.textContent = opt;
-
       b.style.position = "static";
       b.style.width = "100%";
 
@@ -501,66 +501,62 @@ function level10() {
     game.appendChild(wrapper);
   }
 
- function unlockNo() {
-  clearGame();
-  info.textContent = "Atrápalo… 😈";
+  function unlockNo() {
+    clearGame();
+    info.textContent = "Atrápalo… 😈";
 
-  const btn = document.createElement("button");
-  btn.className = "no";
-  btn.textContent = "No 🙃";
+    const btn = document.createElement("button");
+    btn.className = "no";
+    btn.textContent = "No 🙃";
 
-  let x = Math.random() * (game.clientWidth - 120);
-  let y = Math.random() * (game.clientHeight - 160);
-  let vx = 2.2;
-  let vy = 2.6;
-  let bouncing = true;
-
-  btn.style.left = x + "px";
-  btn.style.top = y + "px";
-
-  game.appendChild(btn);
-
-  function move() {
-    if (!bouncing) return;
-
-    x += vx;
-    y += vy;
-
-    const maxX = game.clientWidth - btn.offsetWidth;
-    const maxY = game.clientHeight - btn.offsetHeight;
-
-    if (x <= 0 || x >= maxX) vx *= -1;
-    if (y <= 0 || y >= maxY) vy *= -1;
+    let x = Math.random() * (game.clientWidth - 120);
+    let y = Math.random() * (game.clientHeight - 160);
+    let vx = 2.2;
+    let vy = 2.6;
+    let bouncing = true;
 
     btn.style.left = x + "px";
     btn.style.top = y + "px";
 
-    requestAnimationFrame(move);
-  }
+    game.appendChild(btn);
 
-  move();
+    function move() {
+      if (!bouncing) return;
 
-  btn.onclick = () => {
-    bouncing = false;
+      x += vx;
+      y += vy;
 
-    // Se transforma en SÍ
-    btn.className = "";
-    btn.id = "yes";
-    btn.textContent = "Sí 💖";
-    btn.style.left = "50%";
-    btn.style.top = "50%";
-    btn.style.transform = "translate(-50%, -50%)";
+      const maxX = game.clientWidth - btn.offsetWidth;
+      const maxY = game.clientHeight - btn.offsetHeight;
 
-    btn.onclick = party;
-  };
-}
+      if (x <= 0 || x >= maxX) vx *= -1;
+      if (y <= 0 || y >= maxY) vy *= -1;
 
+      btn.style.left = x + "px";
+      btn.style.top = y + "px";
 
-    game.appendChild(finalBtn);
+      requestAnimationFrame(move);
+    }
+
+    move();
+
+    btn.onclick = () => {
+      bouncing = false;
+
+      btn.className = "";
+      btn.id = "yes";
+      btn.textContent = "Sí 💖";
+      btn.style.left = "50%";
+      btn.style.top = "50%";
+      btn.style.transform = "translate(-50%, -50%)";
+
+      btn.onclick = party;
+    };
   }
 
   renderQuestion();
 }
+
 
 
 function startLevel() {
