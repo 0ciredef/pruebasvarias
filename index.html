@@ -501,64 +501,56 @@ function level10() {
     info.textContent = "Atrápalo… 😈";
 
     const btn = document.createElement("button");
-    btn.className = "no";
     btn.textContent = "No 🙃";
+    btn.className = "no";
+    btn.style.position = "absolute";
 
-    let x = Math.random() * (game.clientWidth - 120);
-    let y = Math.random() * (game.clientHeight - 160);
+    game.appendChild(btn);
 
-    let vx = 4.5;
-    let vy = 5.2;
+    // 🔒 Congelar tamaño una sola vez
+    const fixedWidth = btn.offsetWidth;
+    const fixedHeight = btn.offsetHeight;
+    btn.style.width = fixedWidth + "px";
+    btn.style.height = fixedHeight + "px";
 
-    let bouncing = true;
+    let x = Math.random() * (game.clientWidth - fixedWidth);
+    let y = Math.random() * (game.clientHeight - fixedHeight);
+
+    let vx = 6.5;
+    let vy = 7;
+
     let isYes = false;
+    let running = true;
 
     btn.style.left = x + "px";
     btn.style.top = y + "px";
-    game.appendChild(btn);
 
     function toggleText() {
       isYes = !isYes;
-      if (isYes) {
-        btn.id = "yes";
-        btn.className = "";
-        btn.textContent = "Sí 💖";
-      } else {
-        btn.id = "";
-        btn.className = "no";
-        btn.textContent = "No 🙃";
-      }
+      btn.textContent = isYes ? "Sí 💖" : "No 🙃";
     }
 
     function move() {
-      if (!bouncing) return;
+      if (!running) return;
 
       x += vx;
       y += vy;
 
-      const maxX = game.clientWidth - btn.offsetWidth;
-      const maxY = game.clientHeight - btn.offsetHeight;
+      const maxX = game.clientWidth - fixedWidth;
+      const maxY = game.clientHeight - fixedHeight;
 
       let bounced = false;
 
-      if (x <= 0) {
-        x = 0;
+      if (x <= 0 || x >= maxX) {
         vx *= -1;
         bounced = true;
-      } else if (x >= maxX) {
-        x = maxX;
-        vx *= -1;
-        bounced = true;
+        x = Math.max(0, Math.min(x, maxX));
       }
 
-      if (y <= 0) {
-        y = 0;
+      if (y <= 0 || y >= maxY) {
         vy *= -1;
         bounced = true;
-      } else if (y >= maxY) {
-        y = maxY;
-        vy *= -1;
-        bounced = true;
+        y = Math.max(0, Math.min(y, maxY));
       }
 
       if (bounced) toggleText();
@@ -572,21 +564,20 @@ function level10() {
     move();
 
     btn.onclick = () => {
-      bouncing = false;
+      if (!isYes) return;
 
-      btn.id = "yes";
-      btn.className = "";
+      running = false;
       btn.textContent = "Sí 💖";
       btn.style.left = "50%";
       btn.style.top = "50%";
       btn.style.transform = "translate(-50%, -50%)";
-
       btn.onclick = party;
     };
   }
 
   renderQuestion();
 }
+
 
 
 
