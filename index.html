@@ -212,7 +212,7 @@ function level3() {
 
 function level4() {
   clearGame();
-  info.textContent = "Desaparece";
+  info.textContent = "Cuidado...";
 
   noBtn = document.createElement("button");
   noBtn.className = "no";
@@ -263,7 +263,7 @@ function level5() {
       // Tiempo desaparecido (tensión 😈)
       timeoutId = setTimeout(() => {
         spawn();
-      }, 950); // 👈 tiempo oculto
+      }, 1200); // 👈 tiempo oculto
     }, 400); // 👈 tiempo visible
   }
 
