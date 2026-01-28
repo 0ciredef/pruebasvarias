@@ -457,32 +457,53 @@ function level10() {
   info.textContent = "Nivel 10 – Demuestra que mereces el NO 🧠";
 
   const questions = [
-    {
-      q: "¿Cuál es el planeta más grande del sistema solar?",
-      options: ["Marte", "Júpiter", "Saturno", "Neptuno"],
-      correct: 1
-    },
-    {
-      q: "¿En qué año cayó el Muro de Berlín?",
-      options: ["1985", "1987", "1989", "1991"],
-      correct: 2
-    },
-    {
-      q: "¿Quién escribió 'Los Demonios'?",
-      options: ["Alexandre Dumas", "Ernest Hemingway", "Fyodor Dostoevsky", "Vargas Llosa"],
-      correct: 2
-    },
-    {
-      q: "¿Qué elemento químico tiene símbolo Au?",
-      options: ["Plata", "Oro", "Cobre", "Hierro"],
-      correct: 1
-    },
-    {
-      q: "¿Capital de Canadá?",
-      options: ["Toronto", "Vancouver", "Montreal", "Ottawa"],
-      correct: 3
-    }
-  ];
+  // 🟢 FÁCILES
+  {
+    q: "¿Cuál es el planeta más grande del sistema solar?",
+    options: ["Marte", "Júpiter", "Saturno", "Neptuno"],
+    correct: 1
+  },
+  {
+    q: "¿Capital de Canadá?",
+    options: ["Toronto", "Vancouver", "Montreal", "Ottawa"],
+    correct: 3
+  },
+
+  // 🟡 MEDIA
+  {
+    q: "¿En qué año cayó el Muro de Berlín?",
+    options: ["1985", "1987", "1989", "1991"],
+    correct: 2
+  },
+  {
+    q: "¿Qué elemento químico tiene símbolo Au?",
+    options: ["Plata", "Oro", "Cobre", "Hierro"],
+    correct: 1
+  },
+  {
+    q: "¿Quién escribió 'Los Demonios'?",
+    options: ["Alexandre Dumas", "Ernest Hemingway", "Fyodor Dostoevsky", "Vargas Llosa"],
+    correct: 2
+  },
+
+  // 🔴 DIFÍCILES (nuevas)
+  {
+    q: "¿Cuál de estos países NO formó parte de la URSS?",
+    options: ["Lituania", "Georgia", "Polonia", "Ucrania"],
+    correct: 2
+  },
+  {
+    q: "¿Qué filósofo escribió 'Así habló Zaratustra'?",
+    options: ["Kant", "Nietzsche", "Hegel", "Schopenhauer"],
+    correct: 1
+  },
+  {
+    q: "¿Qué científico formuló las leyes del movimiento y la gravitación universal?",
+    options: ["Einstein", "Galileo", "Newton", "Kepler"],
+    correct: 2
+  }
+];
+
 
   let current = 0;
 
