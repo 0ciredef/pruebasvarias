@@ -475,13 +475,9 @@ function level10() {
 
     questions[current].options.forEach((opt, i) => {
       const b = document.createElement("button");
+      b.className = "fake";
       b.textContent = opt;
       b.style.width = "100%";
-      b.style.padding = "12px";
-      b.style.borderRadius = "12px";
-      b.style.border = "none";
-      b.style.fontSize = "16px";
-      b.style.cursor = "pointer";
 
       b.onclick = () => {
         if (i === questions[current].correct) {
@@ -505,51 +501,34 @@ function level10() {
 
     const btn = document.createElement("button");
     btn.textContent = "No 🙃";
+    btn.className = "no";
     btn.style.position = "absolute";
-    btn.style.background = "#ff4d4d";
-    btn.style.color = "#fff";
-    btn.style.border = "none";
-    btn.style.borderRadius = "999px";
-    btn.style.padding = "14px 26px";
-    btn.style.fontSize = "18px";
-    btn.style.fontWeight = "600";
-    btn.style.cursor = "pointer";
+    btn.style.pointerEvents = "auto";
 
     game.appendChild(btn);
 
-    // 🔒 congelar tamaño para que no cambie nunca
-    const fixedWidth = btn.offsetWidth;
-    const fixedHeight = btn.offsetHeight;
-    btn.style.width = fixedWidth + "px";
-    btn.style.height = fixedHeight + "px";
+    // 🔒 Congelar tamaño
+    const w = btn.offsetWidth;
+    const h = btn.offsetHeight;
+    btn.style.width = w + "px";
+    btn.style.height = h + "px";
 
-    let x = Math.random() * (game.clientWidth - fixedWidth);
-    let y = Math.random() * (game.clientHeight - fixedHeight);
+    let x = Math.random() * (game.clientWidth - w);
+    let y = Math.random() * (game.clientHeight - h);
 
-    let vx = 6.5;
+    let vx = 6;
     let vy = 7;
 
     let isYes = false;
     let running = true;
 
-    btn.style.left = x + "px";
-    btn.style.top = y + "px";
-
-    function setNo() {
-      isYes = false;
-      btn.textContent = "No 🙃";
-      btn.style.background = "#ff4d4d";
+    function setState(yes) {
+      isYes = yes;
+      btn.textContent = yes ? "Sí 💖" : "No 🙃";
+      btn.className = yes ? "yes" : "no";
     }
 
-    function setYes() {
-      isYes = true;
-      btn.textContent = "Sí 💖";
-      btn.style.background = "#4CAF50";
-    }
-
-    function toggle() {
-      isYes ? setNo() : setYes();
-    }
+    setState(false);
 
     function move() {
       if (!running) return;
@@ -557,24 +536,24 @@ function level10() {
       x += vx;
       y += vy;
 
-      const maxX = game.clientWidth - fixedWidth;
-      const maxY = game.clientHeight - fixedHeight;
+      const maxX = game.clientWidth - w;
+      const maxY = game.clientHeight - h;
 
       let bounced = false;
 
       if (x <= 0 || x >= maxX) {
         vx *= -1;
-        x = Math.max(0, Math.min(x, maxX));
         bounced = true;
+        x = Math.max(0, Math.min(x, maxX));
       }
 
       if (y <= 0 || y >= maxY) {
         vy *= -1;
-        y = Math.max(0, Math.min(y, maxY));
         bounced = true;
+        y = Math.max(0, Math.min(y, maxY));
       }
 
-      if (bounced) toggle();
+      if (bounced) setState(!isYes);
 
       btn.style.left = x + "px";
       btn.style.top = y + "px";
@@ -588,19 +567,17 @@ function level10() {
       if (!isYes) return;
 
       running = false;
-
-      btn.textContent = "Sí 💖";
-      btn.style.background = "#4CAF50";
+      setState(true);
       btn.style.left = "50%";
       btn.style.top = "50%";
       btn.style.transform = "translate(-50%, -50%)";
-
       btn.onclick = party;
     };
   }
 
   renderQuestion();
 }
+
 
 
 
