@@ -475,10 +475,13 @@ function level10() {
 
     questions[current].options.forEach((opt, i) => {
       const b = document.createElement("button");
-      b.className = "fake";
       b.textContent = opt;
-      b.style.position = "static";
       b.style.width = "100%";
+      b.style.padding = "12px";
+      b.style.borderRadius = "12px";
+      b.style.border = "none";
+      b.style.fontSize = "16px";
+      b.style.cursor = "pointer";
 
       b.onclick = () => {
         if (i === questions[current].correct) {
@@ -502,12 +505,19 @@ function level10() {
 
     const btn = document.createElement("button");
     btn.textContent = "No 🙃";
-    btn.className = "no";
     btn.style.position = "absolute";
+    btn.style.background = "#ff4d4d";
+    btn.style.color = "#fff";
+    btn.style.border = "none";
+    btn.style.borderRadius = "999px";
+    btn.style.padding = "14px 26px";
+    btn.style.fontSize = "18px";
+    btn.style.fontWeight = "600";
+    btn.style.cursor = "pointer";
 
     game.appendChild(btn);
 
-    // 🔒 Congelar tamaño una sola vez
+    // 🔒 congelar tamaño para que no cambie nunca
     const fixedWidth = btn.offsetWidth;
     const fixedHeight = btn.offsetHeight;
     btn.style.width = fixedWidth + "px";
@@ -525,9 +535,20 @@ function level10() {
     btn.style.left = x + "px";
     btn.style.top = y + "px";
 
-    function toggleText() {
-      isYes = !isYes;
-      btn.textContent = isYes ? "Sí 💖" : "No 🙃";
+    function setNo() {
+      isYes = false;
+      btn.textContent = "No 🙃";
+      btn.style.background = "#ff4d4d";
+    }
+
+    function setYes() {
+      isYes = true;
+      btn.textContent = "Sí 💖";
+      btn.style.background = "#4CAF50";
+    }
+
+    function toggle() {
+      isYes ? setNo() : setYes();
     }
 
     function move() {
@@ -543,17 +564,17 @@ function level10() {
 
       if (x <= 0 || x >= maxX) {
         vx *= -1;
-        bounced = true;
         x = Math.max(0, Math.min(x, maxX));
+        bounced = true;
       }
 
       if (y <= 0 || y >= maxY) {
         vy *= -1;
-        bounced = true;
         y = Math.max(0, Math.min(y, maxY));
+        bounced = true;
       }
 
-      if (bounced) toggleText();
+      if (bounced) toggle();
 
       btn.style.left = x + "px";
       btn.style.top = y + "px";
@@ -567,16 +588,20 @@ function level10() {
       if (!isYes) return;
 
       running = false;
+
       btn.textContent = "Sí 💖";
+      btn.style.background = "#4CAF50";
       btn.style.left = "50%";
       btn.style.top = "50%";
       btn.style.transform = "translate(-50%, -50%)";
+
       btn.onclick = party;
     };
   }
 
   renderQuestion();
 }
+
 
 
 
