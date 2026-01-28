@@ -422,7 +422,6 @@ function level10() {
     wrapper.style.flexDirection = "column";
     wrapper.style.gap = "10px";
 
-    // Pregunta (no clickable)
     const q = document.createElement("div");
     q.textContent = questions[current].q;
     q.style.background = "#333";
@@ -432,13 +431,11 @@ function level10() {
     q.style.textAlign = "center";
     wrapper.appendChild(q);
 
-    // Opciones
     questions[current].options.forEach((opt, i) => {
       const b = document.createElement("button");
       b.className = "fake";
       b.textContent = opt;
 
-      // 🔑 CLAVE: anulamos el absolute SOLO aquí
       b.style.position = "static";
       b.style.width = "100%";
 
@@ -463,35 +460,31 @@ function level10() {
   }
 
   function unlockNo() {
-  clearGame();
-  info.textContent = "¿Seguro que era un NO? 😏";
+    clearGame();
+    info.textContent = "Desbloqueaste el NO final 😈";
 
-  noBtn = document.createElement("button");
-  noBtn.className = "no";
-  noBtn.textContent = "No 🙃";
-  noBtn.style.left = "50%";
-  noBtn.style.top = "50%";
-  noBtn.style.transform = "translate(-50%, -50%)";
+    const finalBtn = document.createElement("button");
+    finalBtn.className = "no";
+    finalBtn.textContent = "No 🙃";
+    finalBtn.style.left = "50%";
+    finalBtn.style.top = "50%";
+    finalBtn.style.transform = "translate(-50%, -50%)";
 
-  let transformed = false;
+    finalBtn.onclick = () => {
+      // ✨ transformación mágica
+      finalBtn.className = "";
+      finalBtn.id = "yes";
+      finalBtn.textContent = "Sí 💖";
 
-  noBtn.onclick = () => {
-    if (!transformed) {
-      // Primera vez: se transforma en SÍ
-      transformed = true;
-      noBtn.className = "";
-      noBtn.id = "yes";
-      noBtn.textContent = "Sí 💖";
-      noBtn.style.background = "#4caf50";
-      info.textContent = "Sabíamos que ibas a decir que sí 😌";
-    } else {
-      // Segunda vez: fiesta
-      party();
-    }
-  };
+      info.textContent = "Sabíamos que sí 🥹";
 
-  game.appendChild(noBtn);
-}
+      setTimeout(() => {
+        party();
+      }, 600);
+    };
+
+    game.appendChild(finalBtn);
+  }
 
   renderQuestion();
 }
