@@ -449,6 +449,8 @@ function level10() {
 
   let current = 0;
 
+  /* ------------------ QUIÉN QUIERE SER MILLONARIO ------------------ */
+
   function renderQuestion() {
     clearGame();
     info.textContent = `Nivel 10 – Pregunta ${current + 1} de 5`;
@@ -483,7 +485,7 @@ function level10() {
       b.onpointerdown = () => {
         if (i === questions[current].correct) {
           current++;
-          current === questions.length ? unlockNo() : renderQuestion();
+          current === questions.length ? unlockDVD() : renderQuestion();
         } else {
           current = 0;
           renderQuestion();
@@ -496,7 +498,9 @@ function level10() {
     game.appendChild(wrapper);
   }
 
-  function unlockNo() {
+  /* ------------------ DVD FINAL ------------------ */
+
+  function unlockDVD() {
     clearGame();
     info.textContent = "Atrápalo… 😈";
 
@@ -504,10 +508,9 @@ function level10() {
     btn.textContent = "No 🙃";
     btn.className = "no";
     btn.style.position = "absolute";
-
     game.appendChild(btn);
 
-    // 🔒 congelar tamaño
+    // Congelar tamaño
     const w = btn.offsetWidth;
     const h = btn.offsetHeight;
     btn.style.width = w + "px";
@@ -570,26 +573,27 @@ function level10() {
 
     move();
 
-    // ✅ FIX DEFINITIVO
+    /* ------------------ INTERACCIÓN FINAL ------------------ */
+
     btn.onpointerdown = (e) => {
       e.preventDefault();
       e.stopPropagation();
 
-      if (!isYes) return;
+      // 👉 Si era NO, se convierte en SÍ (como tocar borde)
+      if (!isYes) {
+        setState(true);
+        return;
+      }
 
+      // 👉 Si era SÍ, se acepta de una vez
       running = false;
-      setState(true);
-
-      btn.style.left = "50%";
-      btn.style.top = "50%";
-      btn.style.transform = "translate(-50%, -50%)";
-
-      btn.onpointerdown = party;
+      party();
     };
   }
 
   renderQuestion();
 }
+
 
 
 
