@@ -214,9 +214,9 @@ function level4() {
   noBtn.onclick = nextLevel;
   game.appendChild(noBtn);
 
-  setInterval(() => place(noBtn), 350);
+  setInterval(() => place(noBtn), 350);  
 }
-setInterval(() => place(noBtn), 800);
+
 function level5() {
   clearGame();
   
@@ -236,7 +236,7 @@ function level5() {
       nextLevel();
     };
     game.appendChild(noBtn);
-
+    setInterval(() => place(noBtn), 800);
     setTimeout(() => {
       if (noBtn && active) {
         noBtn.remove();
