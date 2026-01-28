@@ -349,46 +349,48 @@ function level9() {
   clearGame();
   info.textContent = "Nivel 9 – El orden importa 🧠";
 
-  const total = 5;
-  let currentStep = 0;
+  let step = 0;
 
-  // pesos ocultos (orden correcto)
-  const weights = [];
-  for (let i = 0; i < total; i++) weights.push(i);
-  weights.sort(() => Math.random() - 0.5);
+  // Colores ordenados de frío → cálido (orden correcto)
+  const colors = [
+    "#2196f3", // azul
+    "#03a9f4",
+    "#4caf50", // verde
+    "#8bc34a",
+    "#ffeb3b", // amarillo
+    "#ff9800", // naranja
+    "#ff5722",
+    "#f44336"  // rojo
+  ];
 
-  // el orden correcto es de menor a mayor peso
-  const correctOrder = [...weights].sort((a, b) => a - b);
+  // Mezclamos para que no estén en orden
+  const shuffled = [...colors].sort(() => Math.random() - 0.5);
 
-  const buttons = [];
-
-  weights.forEach((weight, index) => {
+  shuffled.forEach(color => {
     const b = document.createElement("button");
-    b.className = "fake";
     b.textContent = "No";
-
-    // pista visual MUY sutil
-    const scale = 0.9 + weight * 0.03;
-    b.style.transform = `scale(${scale})`;
+    b.className = "fake";
+    b.style.background = color;
+    b.style.color = "#000";
+    b.style.fontWeight = "600";
 
     place(b);
     game.appendChild(b);
-    buttons.push({ btn: b, weight });
 
     b.onclick = () => {
-      if (weight === correctOrder[currentStep]) {
-        // correcto
-        b.style.background = "#777";
-        b.style.color = "#fff";
+      // Si el color es el correcto en el orden
+      if (color === colors[step]) {
         b.textContent = "✓";
         b.disabled = true;
-        currentStep++;
+        b.style.background = "#333";
+        b.style.color = "#fff";
+        step++;
 
-        if (currentStep === correctOrder.length) {
+        if (step === colors.length) {
           unlockFinalNo();
         }
       } else {
-        // fallo → reset
+        // Fallo → reinicio
         level9();
       }
     };
@@ -396,7 +398,7 @@ function level9() {
 
   function unlockFinalNo() {
     clearGame();
-    info.textContent = "Bien jugado 😈";
+    info.textContent = "Ahora sí… 😈";
 
     const finalNo = document.createElement("button");
     finalNo.className = "no";
@@ -409,6 +411,7 @@ function level9() {
     game.appendChild(finalNo);
   }
 }
+
 
 /* NIVEL 10 – FINAL */
 /* NIVEL 10 – QUIÉN QUIERE SER MILLONARIO (FIX REAL) */
