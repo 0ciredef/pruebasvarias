@@ -219,6 +219,7 @@ function level4() {
 
 function level5() {
   clearGame();
+  setInterval(() => place(noBtn), 450);
   info.textContent = "Nivel 5 – Paciencia ⏳";
 
   let active = true;
@@ -244,7 +245,6 @@ function level5() {
     }, 900);
   }
   spawn();
-  setInterval(() => place(noBtn), 450);
 }
 
 /* NIVEL 6 – EL QUE NO SE MUEVE */
