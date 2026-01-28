@@ -231,21 +231,45 @@ function level5() {
   clearGame();
   info.textContent = "Nivel 5 – Paciencia ⏳";
 
-  noBtn = document.createElement("button");
-  noBtn.className = "no";
-  noBtn.textContent = "No 🙃";
-  place(noBtn);
-  game.appendChild(noBtn);
+  let active = true;
+  let timeoutId = null;
 
-  moveInterval = setInterval(() => {
+  function spawn() {
+    if (!active) return;
+
+    noBtn = document.createElement("button");
+    noBtn.className = "no";
+    noBtn.textContent = "No 🙃";
     place(noBtn);
-  }, 900); // 👈 más lento
+    game.appendChild(noBtn);
 
-  noBtn.onclick = () => {
-    clearInterval(moveInterval);
-    nextLevel();
-  };
+    // Movimiento suave mientras está visible
+    moveInterval = setInterval(() => {
+      place(noBtn);
+    }, 900);
+
+    noBtn.onclick = () => {
+      active = false;
+      clearInterval(moveInterval);
+      clearTimeout(timeoutId);
+      nextLevel();
+    };
+
+    // Tiempo visible
+    timeoutId = setTimeout(() => {
+      clearInterval(moveInterval);
+      if (noBtn) noBtn.remove();
+
+      // Tiempo desaparecido (tensión 😈)
+      timeoutId = setTimeout(() => {
+        spawn();
+      }, 700); // 👈 tiempo oculto
+    }, 900); // 👈 tiempo visible
+  }
+
+  spawn();
 }
+
 
 
 /* NIVEL 6 – EL QUE NO SE MUEVE */
