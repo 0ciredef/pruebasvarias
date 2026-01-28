@@ -347,27 +347,66 @@ function level8() {
 /* NIVEL 9 */
 function level9() {
   clearGame();
-  info.textContent = "Nivel 9 – Prueba";
+  info.textContent = "Nivel 9 – El orden importa 🧠";
 
-  const total = 8;
-  const correct = Math.floor(Math.random() * total);
+  const total = 5;
+  let currentStep = 0;
 
-  for (let i = 0; i < total; i++) {
+  // pesos ocultos (orden correcto)
+  const weights = [];
+  for (let i = 0; i < total; i++) weights.push(i);
+  weights.sort(() => Math.random() - 0.5);
+
+  // el orden correcto es de menor a mayor peso
+  const correctOrder = [...weights].sort((a, b) => a - b);
+
+  const buttons = [];
+
+  weights.forEach((weight, index) => {
     const b = document.createElement("button");
     b.className = "fake";
     b.textContent = "No";
+
+    // pista visual MUY sutil
+    const scale = 0.9 + weight * 0.03;
+    b.style.transform = `scale(${scale})`;
+
     place(b);
     game.appendChild(b);
-
-    if (i !== correct) b.onpointerenter = () => place(b);
+    buttons.push({ btn: b, weight });
 
     b.onclick = () => {
-      if (i === correct) {
-        b.className = "no";
-        b.textContent = "No 🙃";
-        b.onclick = nextLevel;
-      } else level9();
+      if (weight === correctOrder[currentStep]) {
+        // correcto
+        b.style.background = "#777";
+        b.style.color = "#fff";
+        b.textContent = "✓";
+        b.disabled = true;
+        currentStep++;
+
+        if (currentStep === correctOrder.length) {
+          unlockFinalNo();
+        }
+      } else {
+        // fallo → reset
+        level9();
+      }
     };
+  });
+
+  function unlockFinalNo() {
+    clearGame();
+    info.textContent = "Bien jugado 😈";
+
+    const finalNo = document.createElement("button");
+    finalNo.className = "no";
+    finalNo.textContent = "No 🙃";
+    finalNo.style.left = "50%";
+    finalNo.style.top = "50%";
+    finalNo.style.transform = "translate(-50%, -50%)";
+    finalNo.onclick = nextLevel;
+
+    game.appendChild(finalNo);
   }
 }
 
