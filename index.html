@@ -471,7 +471,6 @@ function level10() {
     q.style.padding = "14px";
     q.style.borderRadius = "14px";
     q.style.textAlign = "center";
-    q.style.fontSize = "0.95rem";
     wrapper.appendChild(q);
 
     questions[current].options.forEach((opt, i) => {
@@ -484,11 +483,7 @@ function level10() {
       b.onclick = () => {
         if (i === questions[current].correct) {
           current++;
-          if (current === questions.length) {
-            unlockNo();
-          } else {
-            renderQuestion();
-          }
+          current === questions.length ? unlockNo() : renderQuestion();
         } else {
           current = 0;
           renderQuestion();
@@ -512,24 +507,21 @@ function level10() {
     let x = Math.random() * (game.clientWidth - 120);
     let y = Math.random() * (game.clientHeight - 160);
 
-    // 🚀 VELOCIDAD ALTA (DVD old school)
-    let vx = 4.2;
-    let vy = 4.8;
+    let vx = 4.5;
+    let vy = 5.2;
 
     let bouncing = true;
     let isYes = false;
 
     btn.style.left = x + "px";
     btn.style.top = y + "px";
-
     game.appendChild(btn);
 
     function toggleText() {
       isYes = !isYes;
-
       if (isYes) {
-        btn.className = "";
         btn.id = "yes";
+        btn.className = "";
         btn.textContent = "Sí 💖";
       } else {
         btn.id = "";
@@ -549,12 +541,22 @@ function level10() {
 
       let bounced = false;
 
-      if (x <= 0 || x >= maxX) {
+      if (x <= 0) {
+        x = 0;
+        vx *= -1;
+        bounced = true;
+      } else if (x >= maxX) {
+        x = maxX;
         vx *= -1;
         bounced = true;
       }
 
-      if (y <= 0 || y >= maxY) {
+      if (y <= 0) {
+        y = 0;
+        vy *= -1;
+        bounced = true;
+      } else if (y >= maxY) {
+        y = maxY;
         vy *= -1;
         bounced = true;
       }
@@ -572,9 +574,8 @@ function level10() {
     btn.onclick = () => {
       bouncing = false;
 
-      // 💖 FINAL INEVITABLE
-      btn.className = "";
       btn.id = "yes";
+      btn.className = "";
       btn.textContent = "Sí 💖";
       btn.style.left = "50%";
       btn.style.top = "50%";
@@ -586,6 +587,7 @@ function level10() {
 
   renderQuestion();
 }
+
 
 
 
